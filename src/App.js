@@ -1,25 +1,20 @@
-import logo from './logo.svg';
-import './App.css';
+import * as React from 'react';
+import { useTheme } from '@mui/material/styles';
+import Box from '@mui/material/Box';
+import AuthenProvider from './AuthProvider';
+import Sidebar from './shared/sidebar';
+import Login from './pages/login';
 
-function App() {
+
+
+const App = () => {
+  const theme = useTheme();
+  const [open, setOpen] = React.useState(false);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Sidebar />
+    // <Login/>
   );
 }
 
-export default App;
+export default App 
