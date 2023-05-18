@@ -22,11 +22,9 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import FormControl from '@mui/material/FormControl';
 import FormLabel from '@mui/material/FormLabel';
 import InputLabel from '@mui/material/InputLabel';
-import MenuItem from '@mui/material/MenuItem';
 import moment from 'moment';
 import {
     Button,
-    Select,
     DialogHeader,
     DialogBody,
     DialogFooter,
@@ -36,6 +34,9 @@ import {
     Option
 } from "@material-tailwind/react";
 import { XMarkIcon } from "@heroicons/react/24/solid";
+
+import MenuItem from '@mui/material/MenuItem';
+import Select from '@mui/material/Select';
 
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
@@ -79,17 +80,17 @@ BootstrapDialogTitle.propTypes = {
 };
 
 export default function DialogsSubtype(props) {
-    console.log(props);
+    // console.log(props?.data?.row?.toString(typeId));
     const [open, setOpen] = useState(false);
     const [nameSubType, setNameType] = useState(props?.data?.row?.nameSubType);
     const [imageSubType, setImageType] = useState(props?.data?.row?.imageSubType);
-    const [type, setType] = useState(props?.data?.row?.type?.id.toString());
+    const [type, setType] = useState(props?.data?.row?.typeId?.toString());
     const [image, setImage] = useState();
     const [rows, setRows] = useState();
 
     const onType = (e) => {
-        setType(e)
-        console.log(e, 'in');
+        setType(e.target.value)
+        console.log(e.target.value, 'in');
     }
 
     const handleOpen = () => {
@@ -103,13 +104,22 @@ export default function DialogsSubtype(props) {
         if (event.target.files && event.target.files[0]) {
             //   setShowProfile(URL.createObjectURL(event.target.files[0]));
 
+            const type = event.target.files[0].type
             let reader = new FileReader();
             reader.readAsDataURL(event.target.files[0]);
             reader.onload = function () {
                 //   console.log(reader.result);
-                const result = reader.result.replace("data:image/jpeg;base64,", "");
-                setImageType(result)
-                console.log(result);
+                if(type === 'image/jpeg'){
+                    const result = reader.result.replace("data:image/jpeg;base64,", "");
+                    setImageType(result)
+                    console.log(result);
+                }else{
+                    const result = reader.result.replace("data:image/png;base64,", "");
+                    setImageType(result)
+                    console.log(result);
+                }
+              
+                
 
             };
             reader.onerror = function (error) {
@@ -144,7 +154,7 @@ export default function DialogsSubtype(props) {
                     .then(response => {
                         // If request is good...
                         // console.log(response.data.data);
-                        // window.location.reload();
+                        window.location.reload();
 
                     })
                     .catch((error) => {
@@ -168,7 +178,7 @@ export default function DialogsSubtype(props) {
                     .then(response => {
                         // If request is good...
                         // console.log(response.data.data);
-                        // window.location.reload();
+                        window.location.reload();
 
                     })
                     .catch((error) => {
@@ -232,7 +242,7 @@ export default function DialogsSubtype(props) {
                 <BootstrapDialogTitle id="customized-dialog-title" onClose={handleClose}>
                     {/* {props.data?.id ? 'Update User' : 'Create User'} */}
                 </BootstrapDialogTitle>
-                <DialogContent dividers>
+                <DialogContent dividers className="h-full">
                     <Box
                         component="form"
                         sx={{
@@ -248,25 +258,38 @@ export default function DialogsSubtype(props) {
                             <div className="flex space-x-4" >
                                 <Input label="Image sub type" type="file" onChange={(e) => onImageProfile(e)} />
                             </div>
-                            <div>
-                                <img src={`data:image/jpeg;base64,${props?.data?.row?.imageSubType}`} />
-                            </div>
-                            <div>
-
+                            {props.data?.id && (!imageSubType) ?
+                                <div className="flex justify-center">
+                                    <img src={`data:image/jpeg;base64,${props?.data?.row?.imageSubType}`} className="w-28 h-28 " />
+                                    hhhhhh
+                                </div>
+                                :
+                                <div className="flex justify-center">
+                                    <img src={`data:image/jpeg;base64,${imageSubType}`} className="w-28 h-28 " />
+                                </div>
+                            }
+                            <div >
                                 <Select
+                                    labelId="demo-simple-select-label"
+                                    id="demo-simple-select"
+                                    label="Age"
+                                    className="w-72"
                                     value={type}
                                     onChange={(e) => onType(e)}
+
                                 >
                                     {
                                         rows?.map((item) => (
-                                            <Option
+
+                                            <MenuItem
                                                 key={item.id}
                                                 value={item.id}
                                             >
-                                               {item.nameType}
-                                            </Option>
-                                        ))}
+                                                {item.nameType}
+                                            </MenuItem>
 
+
+                                        ))}
                                 </Select>
                             </div>
                         </div>

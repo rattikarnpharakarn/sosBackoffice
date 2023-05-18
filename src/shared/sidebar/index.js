@@ -1,4 +1,4 @@
-import  React,{useState} from 'react';
+import React, { useState } from 'react';
 import { styled, useTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import MuiDrawer from '@mui/material/Drawer';
@@ -25,6 +25,10 @@ import ChatIcon from '@mui/icons-material/Chat';
 import Collapse from '@mui/material/Collapse';
 import LoginIcon from '@mui/icons-material/Login';
 import Grid from '@mui/material/Grid';
+import Login from '../../pages/login';
+import { Button } from '@material-tailwind/react';
+import { useNavigate } from 'react-router-dom';
+
 
 
 const drawerWidth = 240;
@@ -96,11 +100,12 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 
 const Sidebar = () => {
   const theme = useTheme();
+  const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const [openCollapse, setOpenCollapse] = useState(false);
   const [openCollapseSos, setopenCollapseSos] = useState(false);
+  const login = localStorage.getItem('token')
 
-  
 
   function handleOpenSettings() {
     setOpenCollapse(!openCollapse);
@@ -118,238 +123,269 @@ const Sidebar = () => {
     setOpen(false);
   };
 
+  const Logout = () => {
+    localStorage.removeItem('token');
+    navigate('/login');
+  }
+
   return (
     <Box sx={{ display: 'flex' }}>
       {/* <CssBaseline /> */}
-      <AppBar position="fixed" open={open} >
-        <Toolbar className='bg-black'>
-          <IconButton
-            color="inherit"
-            aria-label="open drawer"
-            onClick={handleDrawerOpen}
-            edge="start"
-            sx={{
-              marginRight: 5,
-              ...(open && { display: 'none' }),
-            }}
-          >
-            <MenuIcon />
-          </IconButton>
-          <Grid container spacing={2}>
-            <Grid item xs={6}>
-              <Typography variant="h6" noWrap component="div">
-                SOS Backoffice
-              </Typography>
-            </Grid>
-            <Grid item xs={6}>
-              <Typography variant="h6" noWrap component="div" className='text-right'>
-                <span className='text-xs mr-2'> Logout </span> <LoginIcon />
-              </Typography>
-            </Grid>
-          </Grid>
-        </Toolbar>
-      </AppBar>
-      <Drawer variant="permanent" open={open} >
-        <DrawerHeader className='bg-black'>
-          <IconButton onClick={handleDrawerClose} >
-            {theme.direction === 'rtl' ? <ChevronRightIcon className='text-white' /> : <ChevronLeftIcon className='text-white' />}
-          </IconButton>
-        </DrawerHeader>
-        <Divider />
-        <List>
-          <ListItem disablePadding sx={{ display: 'block' }}>
-            <ListItemButton
-              sx={{
-                minHeight: 48,
-                justifyContent: open ? 'initial' : 'center',
-                px: 2.5,
-              }}
-            >
-              <ListItemIcon
+
+      {login ?
+        <>
+          <AppBar position="fixed" open={open} >
+            <Toolbar className='bg-black'>
+              <IconButton
+                color="inherit"
+                aria-label="open drawer"
+                onClick={handleDrawerOpen}
+                edge="start"
                 sx={{
-                  minWidth: 0,
-                  mr: open ? 3 : 'auto',
-                  justifyContent: 'center',
+                  marginRight: 5,
+                  ...(open && { display: 'none' }),
                 }}
               >
+                <MenuIcon />
+              </IconButton>
+              <Grid container spacing={2}>
+                <Grid item xs={6}>
+                  <Typography variant="h6" noWrap component="div">
+                    SOS Backoffice
+                  </Typography>
+                </Grid>
+                <Grid item xs={6}>
+                  <Typography variant="h6" noWrap component="div" className='text-right'>
+                    <Button className='text-xs mr-2' onClick={Logout}> Logout </Button> <LoginIcon />
+                  </Typography>
+                </Grid>
+              </Grid>
+            </Toolbar>
+          </AppBar>
+          <Drawer variant="permanent" open={open} >
+            <DrawerHeader className='bg-black'>
+              <IconButton onClick={handleDrawerClose} >
+                {theme.direction === 'rtl' ? <ChevronRightIcon className='text-white' /> : <ChevronLeftIcon className='text-white' />}
+              </IconButton>
+            </DrawerHeader>
+            <Divider />
+            <List>
+              <ListItem disablePadding sx={{ display: 'block' }}>
+                <ListItemButton
+                  sx={{
+                    minHeight: 48,
+                    justifyContent: open ? 'initial' : 'center',
+                    px: 2.5,
+                  }}
+                >
+                  <ListItemIcon
+                    sx={{
+                      minWidth: 0,
+                      mr: open ? 3 : 'auto',
+                      justifyContent: 'center',
+                    }}
+                  >
 
-                {<a href='/'><HomeIcon /></a>}
-              </ListItemIcon>
+                    {<a href='/'><HomeIcon /></a>}
+                  </ListItemIcon>
 
-              <ListItemText primary='Home' sx={{ opacity: open ? 1 : 0 }} />
+                  <ListItemText primary='Home' sx={{ opacity: open ? 1 : 0 }} />
 
-            </ListItemButton>
-          </ListItem>
+                </ListItemButton>
+              </ListItem>
 
-          <ListItem disablePadding sx={{ display: 'block' }} onClick={handleOpenSettings}>
-            <ListItemButton
-              sx={{
-                minHeight: 48,
-                justifyContent: open ? 'initial' : 'center',
-                px: 2.5,
-              }}
-            >
-              <ListItemIcon
+              <ListItem disablePadding sx={{ display: 'block' }} onClick={handleOpenSettings}>
+                <ListItemButton
+                  sx={{
+                    minHeight: 48,
+                    justifyContent: open ? 'initial' : 'center',
+                    px: 2.5,
+                  }}
+                >
+                  <ListItemIcon
+                    sx={{
+                      minWidth: 0,
+                      mr: open ? 3 : 'auto',
+                      justifyContent: 'center',
+                    }}
+                  >
+
+                    {<a href='/user'>
+                      <SupervisedUserCircleIcon />
+                    </a>}
+                  </ListItemIcon>
+
+                  <ListItemText primary='Users' sx={{ opacity: open ? 1 : 0 }} />
+                </ListItemButton>
+              </ListItem>
+              <Collapse in={openCollapse} timeout="auto" unmountOnExit>
+                <List component="div" disablePadding>
+                  <ListItem disablePadding sx={{ display: 'block' }}>
+                    <ListItemIcon>
+
+                    </ListItemIcon>
+                    <ListItemText inset>
+                      {
+                        <a href='/user'>
+                          UserManagement
+                        </a>
+                      }
+                    </ListItemText>
+                  </ListItem>
+                </List>
+              </Collapse>
+              <Collapse in={openCollapse} timeout="auto" unmountOnExit>
+                <List component="div" disablePadding>
+                  <ListItem disablePadding sx={{ display: 'block' }}>
+                    <ListItemIcon>
+
+                    </ListItemIcon>
+                    <ListItemText inset>
+                      {
+                        <a href='/role'>
+                          RoleManagement
+                        </a>
+                      }
+                    </ListItemText>
+                  </ListItem>
+                </List>
+              </Collapse>
+            </List>
+            {/* <Divider /> */}
+            <ListItem disablePadding sx={{ display: 'block' }}>
+              <ListItemButton
                 sx={{
-                  minWidth: 0,
-                  mr: open ? 3 : 'auto',
-                  justifyContent: 'center',
+                  minHeight: 48,
+                  justifyContent: open ? 'initial' : 'center',
+                  px: 2.5,
                 }}
               >
+                <ListItemIcon
+                  sx={{
+                    minWidth: 0,
+                    mr: open ? 3 : 'auto',
+                    justifyContent: 'center',
+                  }}
+                >
 
-                {<a href='/user'>
-                  <SupervisedUserCircleIcon />
-                </a>}
-              </ListItemIcon>
-
-              <ListItemText primary='Users' sx={{ opacity: open ? 1 : 0 }} />
-            </ListItemButton>
-          </ListItem>
-          <Collapse in={openCollapse} timeout="auto" unmountOnExit>
-            <List component="div" disablePadding>
-              <ListItem disablePadding sx={{ display: 'block' }}>
-                <ListItemIcon>
-
+                  {<a href='/hotline'>
+                    <ContactEmergencyIcon />
+                  </a>}
                 </ListItemIcon>
-                <ListItemText inset>
-                  {
-                    <a href='/user'>
-                      UserManagement
-                    </a>
-                  }
-                </ListItemText>
-              </ListItem>
-            </List>
-          </Collapse>
-          <Collapse in={openCollapse} timeout="auto" unmountOnExit>
-            <List component="div" disablePadding>
-              <ListItem disablePadding sx={{ display: 'block' }}>
-                <ListItemIcon>
+                <ListItemText primary='Hotline' sx={{ opacity: open ? 1 : 0 }} />
+              </ListItemButton>
+            </ListItem>
 
+            <ListItem disablePadding sx={{ display: 'block' }} onClick={handleOpenSOS}>
+              <ListItemButton
+                sx={{
+                  minHeight: 48,
+                  justifyContent: open ? 'initial' : 'center',
+                  px: 2.5,
+                }}
+              >
+                <ListItemIcon
+                  sx={{
+                    minWidth: 0,
+                    mr: open ? 3 : 'auto',
+                    justifyContent: 'center',
+                  }}
+                >
+
+                  {<a href='/sos'>
+                    <CrisisAlertIcon />
+                  </a>}
                 </ListItemIcon>
-                <ListItemText inset>
-                  {
-                    <a href='/role'>
-                      RoleManagement
-                    </a>
-                  }
-                </ListItemText>
-              </ListItem>
-            </List>
-          </Collapse>
-        </List>
-        {/* <Divider /> */}
-        <ListItem disablePadding sx={{ display: 'block' }}>
-          <ListItemButton
-            sx={{
-              minHeight: 48,
-              justifyContent: open ? 'initial' : 'center',
-              px: 2.5,
-            }}
-          >
-            <ListItemIcon
-              sx={{
-                minWidth: 0,
-                mr: open ? 3 : 'auto',
-                justifyContent: 'center',
-              }}
-            >
 
-              {<a href='/hotline'>
-                <ContactEmergencyIcon />
-              </a>}
-            </ListItemIcon>
-            <ListItemText primary='Hotline' sx={{ opacity: open ? 1 : 0 }} />
-          </ListItemButton>
-        </ListItem>
-
-        <ListItem disablePadding sx={{ display: 'block' }} onClick={handleOpenSOS}>
-          <ListItemButton
-            sx={{
-              minHeight: 48,
-              justifyContent: open ? 'initial' : 'center',
-              px: 2.5,
-            }}
-          >
-            <ListItemIcon
-              sx={{
-                minWidth: 0,
-                mr: open ? 3 : 'auto',
-                justifyContent: 'center',
-              }}
-            >
-
-              {<a href='/sos'>
-                <CrisisAlertIcon />
-              </a>}
-            </ListItemIcon>
-
-            <ListItemText primary='SOS' sx={{ opacity: open ? 1 : 0 }} />
-          </ListItemButton>
-        </ListItem>
-        <Collapse in={openCollapseSos} timeout="auto" unmountOnExit>
-          <List component="div" disablePadding>
-            <ListItem disablePadding sx={{ display: 'block' }}>
-              <ListItemIcon>
-
-              </ListItemIcon>
-              <ListItemText inset>
-                {
-                  <a href='/type'>
-                    Type Management
-                  </a>
-                }
-              </ListItemText>
+                <ListItemText primary='SOS' sx={{ opacity: open ? 1 : 0 }} />
+              </ListItemButton>
             </ListItem>
-          </List>
-        </Collapse>
-        <Collapse in={openCollapseSos} timeout="auto" unmountOnExit>
-          <List component="div" disablePadding>
+            <Collapse in={openCollapseSos} timeout="auto" unmountOnExit>
+              <List component="div" disablePadding>
+                <ListItem disablePadding sx={{ display: 'block' }}>
+                  <ListItemIcon>
+
+                  </ListItemIcon>
+                  <ListItemText inset>
+                    {
+                      <a href='/type'>
+                        Type Management
+                      </a>
+                    }
+                  </ListItemText>
+                </ListItem>
+              </List>
+            </Collapse>
+            <Collapse in={openCollapseSos} timeout="auto" unmountOnExit>
+              <List component="div" disablePadding>
+                <ListItem disablePadding sx={{ display: 'block' }}>
+                  <ListItemIcon>
+
+                  </ListItemIcon>
+                  <ListItemText inset>
+                    {
+                      <a href='/subtype'>
+                        Subtype Management
+                      </a>
+                    }
+                  </ListItemText>
+                </ListItem>
+              </List>
+            </Collapse>
+
             <ListItem disablePadding sx={{ display: 'block' }}>
-              <ListItemIcon>
+              <ListItemButton
+                sx={{
+                  minHeight: 48,
+                  justifyContent: open ? 'initial' : 'center',
+                  px: 2.5,
+                }}
+              >
+                <ListItemIcon
+                  sx={{
+                    minWidth: 0,
+                    mr: open ? 3 : 'auto',
+                    justifyContent: 'center',
+                  }}
+                >
 
-              </ListItemIcon>
-              <ListItemText inset>
-                {
-                  <a href='/subtype'>
-                    Subtype Management
-                  </a>
-                }
-              </ListItemText>
+                  {<a href='/chat'>
+                    <ChatIcon />
+                  </a>}
+                </ListItemIcon>
+
+                <ListItemText primary='Chat' sx={{ opacity: open ? 1 : 0 }} />
+              </ListItemButton>
             </ListItem>
-          </List>
-        </Collapse>
 
-        <ListItem disablePadding sx={{ display: 'block' }}>
-          <ListItemButton
-            sx={{
-              minHeight: 48,
-              justifyContent: open ? 'initial' : 'center',
-              px: 2.5,
-            }}
-          >
-            <ListItemIcon
-              sx={{
-                minWidth: 0,
-                mr: open ? 3 : 'auto',
-                justifyContent: 'center',
-              }}
-            >
+          </Drawer>
+          <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+            <DrawerHeader />
+            <AuthenProvider />
+          </Box>
+        </>
+        :
+        <>
+          <AppBar position="fixed" open={open} >
+            <Toolbar className='bg-black'>
+              <Grid container spacing={2}>
+                <Grid item xs={6}>
+                  <Typography variant="h6" noWrap component="div">
+                    SOS Backoffice
+                  </Typography>
+                </Grid>
+                <Grid item xs={6}>
 
-              {<a href='/chat'>
-                <ChatIcon />
-              </a>}
-            </ListItemIcon>
-
-            <ListItemText primary='Chat' sx={{ opacity: open ? 1 : 0 }} />
-          </ListItemButton>
-        </ListItem>
-
-      </Drawer>
-      <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
-        <DrawerHeader />
-        <AuthenProvider />
-      </Box>
+                </Grid>
+              </Grid>
+            </Toolbar>
+          </AppBar>
+          <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+            <DrawerHeader />
+            <Login />
+          </Box>
+        </>
+      }
     </Box>
   );
 }

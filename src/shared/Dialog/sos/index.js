@@ -81,7 +81,7 @@ export default function DialogsSos(props) {
     const [open, setOpen] = useState(false);
     const [nameType, setNameType] = useState(props.data?.row?.nameType);
     const [imageType, setImageType] = useState(props.data?.row?.imageType);
-    const [image,setImage] = useState();
+    const [image, setImage] = useState();
 
 
     const handleOpen = () => {
@@ -95,17 +95,23 @@ export default function DialogsSos(props) {
         if (event.target.files && event.target.files[0]) {
             //   setShowProfile(URL.createObjectURL(event.target.files[0]));
 
+            const type = event.target.files[0].type
             let reader = new FileReader();
             reader.readAsDataURL(event.target.files[0]);
             reader.onload = function () {
                 //   console.log(reader.result);
-                const result = reader.result.replace("data:image/jpeg;base64,", "");
-                setImageType(result)
-                console.log(result);
+                if (type === 'image/jpeg') {
+                    const result = reader.result.replace("data:image/jpeg;base64,", "");
+                    setImageType(result)
+                    console.log(result);
+                } else {
+                    const result = reader.result.replace("data:image/png;base64,", "");
+                    setImageType(result)
+                    console.log(result);
+                }
 
-            };
-            reader.onerror = function (error) {
-                console.log('Error: ', error);
+
+
             };
         }
 
@@ -147,28 +153,28 @@ export default function DialogsSos(props) {
             }
 
         } else {
-        try {
-            const AuthStr = 'Bearer '.concat('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6ImFkbWluIiwiZXhwIjoxNjg2Mzg5MDc0fQ.eEkGAKDc2HbUDWrngr4y19LYkyOnfLc10Ihhbh_KTzg');
-            const headers = { 'Authorization': AuthStr };
-            const apiUrl = 'http://localhost:81/SosApp/emergency/admin/type/';
-            const config = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6ImFkbWluIiwiZXhwIjoxNjg2Mzg5MDc0fQ.eEkGAKDc2HbUDWrngr4y19LYkyOnfLc10Ihhbh_KTzg';
-            // const { data } = await axios.get(apiUrl, { 'headers': { 'Authorization': AuthStr } });
-            axios.post(apiUrl, payload, { headers })
-                .then(response => {
-                    // If request is good...
-                    // console.log(response.data.data);
-                    window.location.reload();
+            try {
+                const AuthStr = 'Bearer '.concat('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6ImFkbWluIiwiZXhwIjoxNjg2Mzg5MDc0fQ.eEkGAKDc2HbUDWrngr4y19LYkyOnfLc10Ihhbh_KTzg');
+                const headers = { 'Authorization': AuthStr };
+                const apiUrl = 'http://localhost:81/SosApp/emergency/admin/type/';
+                const config = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6ImFkbWluIiwiZXhwIjoxNjg2Mzg5MDc0fQ.eEkGAKDc2HbUDWrngr4y19LYkyOnfLc10Ihhbh_KTzg';
+                // const { data } = await axios.get(apiUrl, { 'headers': { 'Authorization': AuthStr } });
+                axios.post(apiUrl, payload, { headers })
+                    .then(response => {
+                        // If request is good...
+                        // console.log(response.data.data);
+                        window.location.reload();
 
-                })
-                .catch((error) => {
-                    console.log('error ' + error);
-                });
-            // return data;
-        } catch (error) {
-            // throw new Error(error);
-            console.error(error);
-            return error.response;
-        }
+                    })
+                    .catch((error) => {
+                        console.log('error ' + error);
+                    });
+                // return data;
+            } catch (error) {
+                // throw new Error(error);
+                console.error(error);
+                return error.response;
+            }
         }
     }
 
@@ -209,7 +215,15 @@ export default function DialogsSos(props) {
                                 <Input label="Image type" type="file" onChange={(e) => onImageProfile(e)} />
                             </div>
                             <div>
-                                <img src={`data:image/jpeg;base64,${props.data?.row?.imageType}`} />
+                                {props.data?.id && (!imageType) ?
+                                    <div className="flex justify-center">
+                                        <img src={`data:image/jpeg;base64,${props?.data?.row?.imageType}`} className="w-28 h-28 " />
+                                    </div>
+                                    :
+                                    <div className="flex justify-center">
+                                        <img src={`data:image/jpeg;base64,${imageType}`} className="w-28 h-28 " />
+                                    </div>
+                                }
                             </div>
                         </div>
 

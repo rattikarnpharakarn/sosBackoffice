@@ -14,7 +14,7 @@ import Stack from '@mui/material/Stack';
 import axios from 'axios';
 import Grid from '@mui/material/Grid';
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
-
+import Loading from '../../shared/Loading/index';
 
 
 
@@ -59,6 +59,8 @@ RenderDate.propTypes = {
 const RoleManagement = () => {
 
     const [rows, setRows] = React.useState(initialRows);
+    const [loading, setLoading] = useState(false);
+
 
     const Delete = React.useCallback(
         (id) => () => {
@@ -129,26 +131,31 @@ const RoleManagement = () => {
 
     useEffect(() => {
         const fetchData = async () => {
+            setLoading(true);
             try {
                 const AuthStr = 'Bearer '.concat('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6ImFkbWluIiwiZXhwIjoxNjg2Mzg5MDc0fQ.eEkGAKDc2HbUDWrngr4y19LYkyOnfLc10Ihhbh_KTzg');
                 const apiUrl = 'http://localhost:80/SosApp/accounts/admin/role';
                 const config = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6ImFkbWluIiwiZXhwIjoxNjg2Mzg5MDc0fQ.eEkGAKDc2HbUDWrngr4y19LYkyOnfLc10Ihhbh_KTzg';
                 // const { data } = await axios.get(apiUrl, { 'headers': { 'Authorization': AuthStr } });
-                axios.get(apiUrl, { headers: { Authorization: AuthStr } })
+                await axios.get(apiUrl, { headers: { Authorization: AuthStr } })
                     .then(response => {
                         // If request is good...
                         console.log(response.data.data.getRoleList);
                         setRows(response.data.data.getRoleList);
                         console.log(rows);
+                        setLoading(false);
                     })
                     .catch((error) => {
                         console.log('error ' + error);
+                        setLoading(false);
                     });
                 // return data;
             } catch (error) {
                 // throw new Error(error);
                 console.error(error);
                 return error.response;
+            } finally {
+                setLoading(false);
             }
         }
 
@@ -158,18 +165,41 @@ const RoleManagement = () => {
 
 
     return (
+
         <>
-            <Grid container spacing={2}>
-                <Grid item xs={6}>
-                    <p className='text-xl'><span><AdminPanelSettingsIcon className='mr-5 w-72' /></span>RoleManagement</p>
-                </Grid>
-                <Grid item xs={6}>
-                    <DialogsRole />
-                </Grid>
-            </Grid>
-            <div style={{ height: 400, width: '100%' }}>
-                <DataGrid rows={rows} columns={columns} />
-            </div>
+            {loading ?
+                <>
+                    <Loading />
+                    <div className='opacity-20'>
+
+                        <Grid container spacing={2}>
+                            <Grid item xs={6}>
+                                <p className='text-xl'><span><AdminPanelSettingsIcon className='mr-5 w-72' /></span>RoleManagement</p>
+                            </Grid>
+                            <Grid item xs={6}>
+                                <DialogsRole />
+                            </Grid>
+                        </Grid>
+                        <div style={{ height: 400, width: '100%' }}>
+                            <DataGrid rows={rows} columns={columns} />
+                        </div>
+                    </div>
+                </>
+                :
+                <>
+                    <Grid container spacing={2}>
+                        <Grid item xs={6}>
+                            <p className='text-xl'><span><AdminPanelSettingsIcon className='mr-5 w-72' /></span>RoleManagement</p>
+                        </Grid>
+                        <Grid item xs={6}>
+                            <DialogsRole />
+                        </Grid>
+                    </Grid>
+                    <div style={{ height: 400, width: '100%' }}>
+                        <DataGrid rows={rows} columns={columns} />
+                    </div>
+                </>
+            }
         </>
     );
 }

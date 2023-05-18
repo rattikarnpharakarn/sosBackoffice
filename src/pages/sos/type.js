@@ -15,6 +15,8 @@ import axios from 'axios';
 import moment from 'moment';
 import SosIcon from '@mui/icons-material/Sos';
 import Grid from '@mui/material/Grid';
+import DialogsSubtype from '../../shared/Dialog/sos/subtype';
+import Loading from '../../shared/Loading/index';
 
 
 function RenderDate(props) {
@@ -58,6 +60,8 @@ RenderDate.propTypes = {
 const Type = () => {
 
     const [rows, setRows] = React.useState(initialRows);
+    const [loading, setLoading] = useState(false);
+
 
     const Delete = React.useCallback(
         (id) => () => {
@@ -133,26 +137,35 @@ const Type = () => {
 
     useEffect(() => {
         const fetchData = async () => {
+            setLoading(true);
+
             try {
                 const AuthStr = 'Bearer '.concat('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6ImFkbWluIiwiZXhwIjoxNjg2Mzg5MDc0fQ.eEkGAKDc2HbUDWrngr4y19LYkyOnfLc10Ihhbh_KTzg');
                 const apiUrl = 'http://localhost:81/SosApp/emergency/type';
                 const config = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6ImFkbWluIiwiZXhwIjoxNjg2Mzg5MDc0fQ.eEkGAKDc2HbUDWrngr4y19LYkyOnfLc10Ihhbh_KTzg';
                 // const { data } = await axios.get(apiUrl, { 'headers': { 'Authorization': AuthStr } });
-                axios.get(apiUrl, { headers: { Authorization: AuthStr } })
+                await axios.get(apiUrl, { headers: { Authorization: AuthStr } })
                     .then(response => {
                         // If request is good...
                         console.log(response.data.data);
                         setRows(response.data.data);
+                        setLoading(false);
+
                         console.log(rows);
                     })
                     .catch((error) => {
                         console.log('error ' + error);
+                        setLoading(false);
+
                     });
                 // return data;
             } catch (error) {
                 // throw new Error(error);
                 console.error(error);
                 return error.response;
+            } finally {
+                setLoading(false);
+
             }
         }
 
@@ -162,20 +175,45 @@ const Type = () => {
 
     return (
         <>
-            <Grid container spacing={2}>
-                <Grid item xs={6}>
-                    <p className='text-xl'><span><SosIcon className='mr-5 w-72' /></span></p>
-                </Grid>
-                <Grid item xs={6}>
+          {loading ?
+            <>
+              <Loading />
+              <div className='opacity-20'>
+                <Grid container spacing={2}>
+                  <Grid item xs={6}>
+                    <p className='text-xl'><span><SosIcon className='mr-5' /></span>UserManagement</p>
+                  </Grid>
+                  <Grid item xs={6}>
                     <DialogsSos />
+                  </Grid>
                 </Grid>
-            </Grid>
-
-            <div style={{ height: 400, width: 'auto' }}>
+                <div style={{ height: 400, width: '100%' }}>
+                  <DataGrid rows={rows} columns={columns} />
+                </div>
+              </div>
+            </>
+            :
+            <>
+              <Grid container spacing={2}>
+                <Grid item xs={6}>
+                  <p className='text-xl'><span><SosIcon className='mr-5' /></span>UserManagement</p>
+                </Grid>
+                <Grid item xs={6}>
+                  <DialogsSos />
+                </Grid>
+              </Grid>
+    
+              <div style={{ height: 400, width: '100%' }}>
                 <DataGrid rows={rows} columns={columns} />
-            </div>
+              </div>
+            </>
+    
+          }
+    
         </>
-    );
-}
+      );
+    }
+
+
 
 export default Type

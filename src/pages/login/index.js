@@ -1,4 +1,4 @@
-import * as React from 'react';
+import  React,{useState} from 'react';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -12,6 +12,8 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 function Copyright(props) {
   return (
@@ -29,13 +31,36 @@ function Copyright(props) {
 const theme = createTheme();
 
 export default function Login() {
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get('email'),
-      password: data.get('password'),
-    });
+  const navigate = useNavigate();
+  const [username, setUsername] = React.useState();
+  const [password, setPassword] = React.useState();
+
+
+
+
+  const handleSubmit = async () => {
+    const payload = {
+      username: username,
+      password: password
+    }
+    console.log(payload)
+
+    try {
+      const apiUrl = 'http://localhost:80/SosApp/accounts/signIn';
+      const res = await axios.post(apiUrl, payload)
+      console.log(res.data.token);
+      localStorage.setItem('token', res.data.token)
+
+
+      if (res.data.token) {
+        navigate('/');
+      }
+      // return data;
+    } catch (error) {
+      // throw new Error(error);
+      console.error(error);
+      return error.response;
+    } 
   };
 
   return (
@@ -56,7 +81,7 @@ export default function Login() {
           <Typography component="h1" variant="h5">
             Sign in
           </Typography>
-          <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
+          <Box component="form" noValidate sx={{ mt: 1 }}>
             <TextField
               margin="normal"
               required
@@ -66,6 +91,7 @@ export default function Login() {
               name="username"
               autoComplete="username"
               autoFocus
+              onChange={(e) => setUsername(e.target.value)}
             />
             <TextField
               margin="normal"
@@ -76,14 +102,15 @@ export default function Login() {
               type="password"
               id="password"
               autoComplete="current-password"
+              onChange={(e) => setPassword(e.target.value)}
             />
 
             <Button
-              type="submit"
+              type="button"
               fullWidth
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
-            >
+              onClick={handleSubmit}>
               Sign In
             </Button>
           </Box>

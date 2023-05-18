@@ -18,6 +18,9 @@ import moment from 'moment';
 import Grid from '@mui/material/Grid';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import DialogUser from '../../shared/Dialog/user';
+import Loading from '../../shared/Loading/index';
+import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
+import DialogDetail from '../../shared/Dialog/user/detail';
 
 function RenderDate(props) {
   const { hasFocus, value } = props;
@@ -42,7 +45,7 @@ function RenderDate(props) {
 const initialRows = [
   {
     id: 1, col1: 'Avartar', col2: 'World', col3: 'a@email.coms',
-    col4: '12345678901', col5: 'Image id', col6: 'Female', col7: true, col8: true, col9: true, col10: true,
+    col4: '12345678901', col5: 'Image id', col6: 'Female', col7: true, 
   },
 ];
 
@@ -62,6 +65,7 @@ const UserManagement = () => {
   const navigate = useNavigate();
   const [data, setData] = useState();
   const [rows, setRows] = useState(initialRows);
+  const [loading, setLoading] = useState(false);
 
   const Delete = React.useCallback(
     (id) => () => {
@@ -134,7 +138,7 @@ const UserManagement = () => {
       field: 'actions',
       headerName: 'Action',
       type: 'actions',
-      width: 80,
+      width: 100,
       getActions: (params) => [
         <DialogUser data={params} />,
         <GridActionsCellItem
@@ -143,12 +147,14 @@ const UserManagement = () => {
           onClick={Delete(params.id)}
           showInMenu
         />,
-        <GridActionsCellItem
-          icon={<ViewColumnIcon />}
-          label="Detail"
-          onClick={Detail(params.id)}
-          showInMenu
-        />,
+        <DialogDetail id={params.id}/>
+
+        // <GridActionsCellItem
+        //   icon={<ViewColumnIcon />}
+        //   label="Detail"
+        //   onClick={Detail(params.id)}
+        //   showInMenu
+        // />,
       ],
       // renderCell: (params) => {
       // return  <DialogUser props={params} />;
@@ -161,19 +167,23 @@ const UserManagement = () => {
 
   useEffect(() => {
     const fetchData = async () => {
+      setLoading(true);
       try {
         const AuthStr = 'Bearer '.concat('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6ImFkbWluIiwiZXhwIjoxNjg2Mzg5MDc0fQ.eEkGAKDc2HbUDWrngr4y19LYkyOnfLc10Ihhbh_KTzg');
         const apiUrl = 'http://localhost:80/SosApp/accounts/admin/user';
         const config = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6ImFkbWluIiwiZXhwIjoxNjg2Mzg5MDc0fQ.eEkGAKDc2HbUDWrngr4y19LYkyOnfLc10Ihhbh_KTzg';
         // const { data } = await axios.get(apiUrl, { 'headers': { 'Authorization': AuthStr } });
-        axios.get(apiUrl, { headers: { Authorization: AuthStr } })
+        await axios.get(apiUrl, { headers: { Authorization: AuthStr } })
           .then(response => {
             // If request is good...
             console.log(response.data.data);
             setRows(response.data.data);
             console.log(rows);
+            setLoading(false);
           })
           .catch((error) => {
+            setLoading(false);
+
             console.log('error ' + error);
           });
         // return data;
@@ -181,6 +191,9 @@ const UserManagement = () => {
         // throw new Error(error);
         console.error(error);
         return error.response;
+      } finally {
+        setLoading(false);
+
       }
     }
 
@@ -189,18 +202,41 @@ const UserManagement = () => {
 
   return (
     <>
-      <Grid container spacing={2}>
-        <Grid item xs={6}>
-          <p className='text-xl'><span><AccountCircleIcon className='mr-5' /></span>UserManagement</p>
-        </Grid>
-        <Grid item xs={6}>
-          <DialogUser />
-        </Grid>
-      </Grid>
+      {loading ?
+        <>
+          <Loading />
+          <div className='opacity-20'>
+            <Grid container spacing={2}>
+              <Grid item xs={6}>
+                <p className='text-xl'><span><AccountCircleIcon className='mr-5' /></span>UserManagement</p>
+              </Grid>
+              <Grid item xs={6}>
+                <DialogUser />
+              </Grid>
+            </Grid>
+            <div style={{ height: 400, width: '100%' }}>
+              <DataGrid rows={rows} columns={columns} />
+            </div>
+          </div>
+        </>
+        :
+        <>
+          <Grid container spacing={2}>
+            <Grid item xs={6}>
+              <p className='text-xl'><span><AccountCircleIcon className='mr-5' /></span>UserManagement</p>
+            </Grid>
+            <Grid item xs={6}>
+              <DialogUser />
+            </Grid>
+          </Grid>
 
-      <div style={{ height: 400, width: '100%' }}>
-        <DataGrid rows={rows} columns={columns} />
-      </div>
+          <div style={{ height: 400, width: '100%' }}>
+            <DataGrid rows={rows} columns={columns} />
+          </div>
+        </>
+
+      }
+
     </>
   );
 }

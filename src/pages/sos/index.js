@@ -15,12 +15,15 @@ import axios from 'axios';
 import moment from 'moment';
 import SosIcon from '@mui/icons-material/Sos';
 import Grid from '@mui/material/Grid';
-
+import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
+import DetailDialogs from '../../shared/Dialog/sos/detail';
+import Loading from '../../shared/Dialog/sos/index'
 
 function RenderDate(props) {
   const { hasFocus, value } = props;
   const buttonElement = React.useRef(null);
   const rippleRef = React.useRef(null);
+  const [loading, setLoading] = useState(false);
 
   React.useLayoutEffect(() => {
     if (hasFocus) {
@@ -58,6 +61,8 @@ RenderDate.propTypes = {
 const Sos = () => {
 
   const [rows, setRows] = React.useState(initialRows);
+  const [loading, setLoading] = useState(false);
+
 
   const deleteUser = React.useCallback(
     (id) => () => {
@@ -79,48 +84,20 @@ const Sos = () => {
     [],
   );
 
-
-
-  const columns = [
-
-    { field: 'username', headerName: 'Name', width: 300 },
-    { field: 'workplace', headerName: 'Type', width: 300 },
-    { field: 'subTypeName', headerName: 'Sub type', width: 300 },
-    { field: 'description', headerName: 'Description', width: 300 },
-    { field: 'date', headerName: 'Date', width: 100, valueFormatter: ({ value }) => moment(value).format('MM/DD/YYYY') },
-    {
-      field: 'actions',
-      headerName: 'Action',
-      type: 'actions',
-      getActions: (params) => [
-        <GridActionsCellItem
-          icon={<EditIcon />}
-          label="Edit"
-          onClick={deleteUser(params.id)}
-        />,
-        <GridActionsCellItem
-          icon={<DeleteIcon />}
-          label="Delete"
-          onClick={toggleAdmin(params.id)}
-          showInMenu
-        />,
-      ],
-    },
-  ]
-
-  useEffect(() => {
-    const fetchData = async () => {
+  const Delete = React.useCallback(
+    (id) => () => {
       try {
         const AuthStr = 'Bearer '.concat('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6ImFkbWluIiwiZXhwIjoxNjg2Mzg5MDc0fQ.eEkGAKDc2HbUDWrngr4y19LYkyOnfLc10Ihhbh_KTzg');
-        const apiUrl = 'http://localhost:81/SosApp/emergency/type';
+        const headers = { 'Authorization': AuthStr };
+        const apiUrl = `http://localhost:81/SosApp/emergency/admin/${id}`;
         const config = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6ImFkbWluIiwiZXhwIjoxNjg2Mzg5MDc0fQ.eEkGAKDc2HbUDWrngr4y19LYkyOnfLc10Ihhbh_KTzg';
         // const { data } = await axios.get(apiUrl, { 'headers': { 'Authorization': AuthStr } });
-        axios.get(apiUrl, { headers: { Authorization: AuthStr } })
+        axios.delete(apiUrl, { headers })
           .then(response => {
             // If request is good...
             console.log(response.data.data);
-            setRows(response.data.data);
-            console.log(rows);
+            window.location.reload();
+
           })
           .catch((error) => {
             console.log('error ' + error);
@@ -131,6 +108,71 @@ const Sos = () => {
         console.error(error);
         return error.response;
       }
+    },
+    [],
+  );
+
+
+
+  const columns = [
+
+    { field: 'description', headerName: 'Name', width: 200 },
+    { field: 'subTypeName', headerName: 'Sub type', width: 200 },
+    { field: 'status', headerName: 'Status', width: 200 },
+    { field: 'phoneNumberCallBack', headerName: 'Phone number', width: 200 },
+    { field: 'date', headerName: 'Date', width: 120, valueFormatter: ({ value }) => moment(value).format('MM/DD/YYYY') },
+    {
+      field: 'actions',
+      headerName: 'Action',
+      type: 'actions',
+      getActions: (params) => [
+        <GridActionsCellItem
+          icon={<DeleteIcon />}
+          label="Edit"
+          onClick={Delete(params.id)}
+        />,
+        // <GridActionsCellItem
+        //   icon={<RemoveRedEyeIcon />}
+        //   label="Delete"
+        //   onClick={toggleAdmin(params.id)}
+        // />
+        <DetailDialogs id={params.id} />,
+      ],
+    },
+  ]
+
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+
+      try {
+        const AuthStr = 'Bearer '.concat('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6ImFkbWluIiwiZXhwIjoxNjg2Mzg5MDc0fQ.eEkGAKDc2HbUDWrngr4y19LYkyOnfLc10Ihhbh_KTzg');
+        const apiUrl = 'http://localhost:81/SosApp/emergency/admin/';
+        const config = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6ImFkbWluIiwiZXhwIjoxNjg2Mzg5MDc0fQ.eEkGAKDc2HbUDWrngr4y19LYkyOnfLc10Ihhbh_KTzg';
+        // const { data } = await axios.get(apiUrl, { 'headers': { 'Authorization': AuthStr } });
+        await axios.get(apiUrl, { headers: { Authorization: AuthStr } })
+          .then(response => {
+            // If request is good...
+            console.log(response.data.data);
+            setRows(response.data.data);
+            console.log(rows);
+            setLoading(false);
+
+          })
+          .catch((error) => {
+            console.log('error ' + error);
+            setLoading(false);
+
+          });
+        // return data;
+      } catch (error) {
+        // throw new Error(error);
+        console.error(error);
+        return error.response;
+      } finally {
+        setLoading(false);
+
+      }
     }
 
     fetchData();
@@ -139,18 +181,50 @@ const Sos = () => {
 
   return (
     <>
-      <Grid container spacing={2}>
-        <Grid item xs={6}>
-          <p className='text-xl'><span><SosIcon className='mr-5 w-72' /></span></p>
-        </Grid>
-        <Grid item xs={6}>
-          {/* <DialogsSos /> */}
-        </Grid>
-      </Grid>
+      {loading ?
+        <>
+          <Loading />
+          <div className='opacity-20'>
+            <Grid container spacing={2}>
+              <Grid item xs={6}>
+                <p className='text-xl'>
+                  <span>
+                    <SosIcon className='mr-5 w-72' />
+                  </span>
+                </p>
+              </Grid>
+              <Grid item xs={6}>
+                {/* <DialogsSos /> */}
+              </Grid>
+            </Grid>
 
-      <div style={{ height: 400, width: 'auto' }}>
-        <DataGrid rows={rows} columns={columns} />
-      </div>
+            <div style={{ height: 400, width: 'auto' }}>
+              <DataGrid rows={rows} columns={columns} />
+            </div>
+          </div>
+
+        </>
+        :
+        <>
+          <Grid container spacing={2}>
+            <Grid item xs={6}>
+              <p className='text-xl'>
+                <span>
+                  <SosIcon className='mr-5 w-72' />
+                </span>
+              </p>
+            </Grid>
+            <Grid item xs={6}>
+              {/* <DialogsSos /> */}
+            </Grid>
+          </Grid>
+
+          <div style={{ height: 400, width: 'auto' }}>
+            <DataGrid rows={rows} columns={columns} />
+          </div>
+        </>
+
+      }
     </>
   );
 }

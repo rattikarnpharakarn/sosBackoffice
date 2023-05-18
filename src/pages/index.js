@@ -1,7 +1,7 @@
 import React from 'react'
 
 
-const HomePage = () => {
+const Home = () => {
     return (
         <div className="App">
             <header className="App-header">
@@ -22,4 +22,4 @@ const HomePage = () => {
     )
 }
 
-export default HomePage
+export default Home

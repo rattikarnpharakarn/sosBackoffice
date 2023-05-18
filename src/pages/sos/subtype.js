@@ -16,6 +16,7 @@ import moment from 'moment';
 import SosIcon from '@mui/icons-material/Sos';
 import Grid from '@mui/material/Grid';
 import DialogsSubtype from '../../shared/Dialog/sos/subtype';
+import Loading from '../../shared/Loading/index';
 
 
 
@@ -23,6 +24,7 @@ function RenderDate(props) {
     const { hasFocus, value } = props;
     const buttonElement = React.useRef(null);
     const rippleRef = React.useRef(null);
+   
 
     React.useLayoutEffect(() => {
         if (hasFocus) {
@@ -60,13 +62,14 @@ RenderDate.propTypes = {
 const SubType = () => {
 
     const [rows, setRows] = React.useState(initialRows);
+    const [loading, setLoading] = useState(false);
 
     const Delete = React.useCallback(
         (id) => () => {
             try {
                 const AuthStr = 'Bearer '.concat('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6ImFkbWluIiwiZXhwIjoxNjg2Mzg5MDc0fQ.eEkGAKDc2HbUDWrngr4y19LYkyOnfLc10Ihhbh_KTzg');
                 const headers = { 'Authorization': AuthStr };
-                const apiUrl = `http://localhost:81/SosApp/emergency/admin/type/${id}`;
+                const apiUrl = `http://localhost:81/SosApp/emergency/admin/subType/${id}`;
                 const config = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6ImFkbWluIiwiZXhwIjoxNjg2Mzg5MDc0fQ.eEkGAKDc2HbUDWrngr4y19LYkyOnfLc10Ihhbh_KTzg';
                 // const { data } = await axios.get(apiUrl, { 'headers': { 'Authorization': AuthStr } });
                 axios.delete(apiUrl, { headers })
@@ -135,19 +138,25 @@ const SubType = () => {
 
     useEffect(() => {
         const fetchData = async () => {
+            setLoading(true);
+
             try {
                 const AuthStr = 'Bearer '.concat('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6ImFkbWluIiwiZXhwIjoxNjg2Mzg5MDc0fQ.eEkGAKDc2HbUDWrngr4y19LYkyOnfLc10Ihhbh_KTzg');
                 const apiUrl = 'http://localhost:81/SosApp/emergency/subType';
                 const config = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6ImFkbWluIiwiZXhwIjoxNjg2Mzg5MDc0fQ.eEkGAKDc2HbUDWrngr4y19LYkyOnfLc10Ihhbh_KTzg';
                 // const { data } = await axios.get(apiUrl, { 'headers': { 'Authorization': AuthStr } });
-                axios.get(apiUrl, { headers: { Authorization: AuthStr } })
+                await axios.get(apiUrl, { headers: { Authorization: AuthStr } })
                     .then(response => {
                         // If request is good...
                         console.log(response.data.data);
                         setRows(response.data.data);
                         console.log(rows);
+                        setLoading(false);
+
                     })
                     .catch((error) => {
+                        setLoading(false);
+
                         console.log('error ' + error);
                     });
                 // return data;
@@ -155,6 +164,9 @@ const SubType = () => {
                 // throw new Error(error);
                 console.error(error);
                 return error.response;
+            } finally {
+                setLoading(false);
+
             }
         }
 
@@ -164,18 +176,41 @@ const SubType = () => {
 
     return (
         <>
-            <Grid container spacing={2}>
-                <Grid item xs={6}>
-                    <p className='text-xl'><span><SosIcon className='mr-5 w-72' /></span></p>
-                </Grid>
-                <Grid item xs={6}>
-                    <DialogsSubtype />
-                </Grid>
-            </Grid>
+            {loading ?
+                <>
+                    <Loading />
+                    <div className='opacity-20'>
+                        <Grid container spacing={2}>
+                            <Grid item xs={6}>
+                                <p className='text-xl'><span><SosIcon className='mr-5 w-72' /></span></p>
+                            </Grid>
+                            <Grid item xs={6}>
+                                <DialogsSubtype />
+                            </Grid>
+                        </Grid>
 
-            <div style={{ height: 400, width: 'auto' }}>
-                <DataGrid rows={rows} columns={columns} />
-            </div>
+                        <div style={{ height: 400, width: 'auto' }}>
+                            <DataGrid rows={rows} columns={columns} />
+                        </div>
+                    </div>
+                </>
+                :
+                <>
+                    <Grid container spacing={2}>
+                        <Grid item xs={6}>
+                            <p className='text-xl'><span><SosIcon className='mr-5 w-72' /></span></p>
+                        </Grid>
+                        <Grid item xs={6}>
+                            <DialogsSubtype />
+                        </Grid>
+                    </Grid>
+
+                    <div style={{ height: 400, width: 'auto' }}>
+                        <DataGrid rows={rows} columns={columns} />
+                    </div>
+                </>
+            }
+
         </>
     );
 }

@@ -8,7 +8,7 @@ import Sos from './pages/sos';
 import User from './pages/users';
 import UserManagement from './pages/users/userManagement';
 import RoleManagement from './pages/users/roleManagement';
-import Detail from './pages/users/detail';
+
 import Login from './pages/login';
 import Type from './pages/sos/type';
 import Subtype from './pages/sos/subtype';
@@ -22,10 +22,10 @@ const AuthenProvider = () => {
     // <AuthProvider>
 
     <Routes>
-      {/* <Route
-        path="*"
+      <Route
+        path="/login"
         element={<Login />}
-      /> */}
+      />
       <Route
         path="/"
         element={<HomePage />}
@@ -58,10 +58,7 @@ const AuthenProvider = () => {
         path="/chat"
         element={<Chat />}
       />
-      <Route
-        path="/detail/:id"
-        element={<Detail />}
-      />
+
     </Routes>
     // </AuthProvider>
   );

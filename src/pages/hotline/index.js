@@ -14,6 +14,7 @@ import Stack from '@mui/material/Stack';
 import axios from 'axios';
 import Grid from '@mui/material/Grid';
 import ContactPhoneIcon from '@mui/icons-material/ContactPhone';
+import Loading from '../../shared/Loading/index';
 
 function RenderDate(props) {
   const { hasFocus, value } = props;
@@ -56,34 +57,38 @@ RenderDate.propTypes = {
 const Hotline = () => {
 
   const [rows, setRows] = React.useState(initialRows);
+  const [loading, setLoading] = useState(false);
 
   const Delete = React.useCallback(
     (id) => () => {
-        try {
-            const AuthStr = 'Bearer '.concat('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6ImFkbWluIiwiZXhwIjoxNjg2Mzg5MDc0fQ.eEkGAKDc2HbUDWrngr4y19LYkyOnfLc10Ihhbh_KTzg');
-            const headers = { 'Authorization': AuthStr };
-            const apiUrl = `http://localhost:82/SosApp/hotline/admin/${id}`;
-            const config = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6ImFkbWluIiwiZXhwIjoxNjg2Mzg5MDc0fQ.eEkGAKDc2HbUDWrngr4y19LYkyOnfLc10Ihhbh_KTzg';
-            // const { data } = await axios.get(apiUrl, { 'headers': { 'Authorization': AuthStr } });
-            axios.delete(apiUrl, { headers })
-                .then(response => {
-                    // If request is good...
-                    console.log(response.data.data);
-                    window.location.reload();
+      try {
+        const AuthStr = 'Bearer '.concat('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6ImFkbWluIiwiZXhwIjoxNjg2Mzg5MDc0fQ.eEkGAKDc2HbUDWrngr4y19LYkyOnfLc10Ihhbh_KTzg');
+        const headers = { 'Authorization': AuthStr };
+        const apiUrl = `http://localhost:82/SosApp/hotline/admin/${id}`;
+        const config = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6ImFkbWluIiwiZXhwIjoxNjg2Mzg5MDc0fQ.eEkGAKDc2HbUDWrngr4y19LYkyOnfLc10Ihhbh_KTzg';
+        // const { data } = await axios.get(apiUrl, { 'headers': { 'Authorization': AuthStr } });
+        axios.delete(apiUrl, { headers })
+          .then(response => {
+            // If request is good...
+            console.log(response.data.data);
+            window.location.reload();
 
-                })
-                .catch((error) => {
-                    console.log('error ' + error);
-                });
-            // return data;
-        } catch (error) {
-            // throw new Error(error);
-            console.error(error);
-            return error.response;
-        }
+
+          })
+          .catch((error) => {
+
+
+            console.log('error ' + error);
+          });
+        // return data;
+      } catch (error) {
+        // throw new Error(error);
+        console.error(error);
+        return error.response;
+      }
     },
     [],
-);
+  );
 
   const toggleAdmin = React.useCallback(
     (id) => () => {
@@ -107,7 +112,7 @@ const Hotline = () => {
       headerName: 'Action',
       type: 'actions',
       getActions: (params) => [
-        <DialogsHotline data={params} />,,
+        <DialogsHotline data={params} />, ,
         <GridActionsCellItem
           icon={<DeleteIcon />}
           label="Delete"
@@ -119,45 +124,75 @@ const Hotline = () => {
 
   useEffect(() => {
     const fetchData = async () => {
+      setLoading(true);
+
       try {
         const AuthStr = 'Bearer '.concat('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6ImFkbWluIiwiZXhwIjoxNjg2Mzg5MDc0fQ.eEkGAKDc2HbUDWrngr4y19LYkyOnfLc10Ihhbh_KTzg');
         const apiUrl = 'http://localhost:82/SosApp/hotline/';
         const config = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6ImFkbWluIiwiZXhwIjoxNjg2Mzg5MDc0fQ.eEkGAKDc2HbUDWrngr4y19LYkyOnfLc10Ihhbh_KTzg';
         // const { data } = await axios.get(apiUrl, { 'headers': { 'Authorization': AuthStr } });
-        axios.get(apiUrl, { headers: { Authorization: AuthStr } })
+        await axios.get(apiUrl, { headers: { Authorization: AuthStr } })
           .then(response => {
             // If request is good...
             console.log(response.data.data);
             setRows(response.data.data);
             console.log(rows);
+            setLoading(false);
+
           })
           .catch((error) => {
             console.log('error ' + error);
+            setLoading(false);
+
           });
         // return data;
       } catch (error) {
         // throw new Error(error);
         console.error(error);
         return error.response;
+      } finally {
+        setLoading(false);
+
       }
     }
 
     fetchData();
   }, []);
-console.log(rows);
+  console.log(rows);
   return (
     <>
-      <Grid container spacing={2}>
-        <Grid item xs={6}>
-          <p className='text-xl'><span><ContactPhoneIcon className='mr-5 w-72' /></span>Hotline</p>
-        </Grid>
-        <Grid item xs={6}>
-          <DialogsHotline />
-        </Grid>
-      </Grid>
-      <div style={{ height: 400, width: 'auto' }}>
-        <DataGrid rows={rows} columns={columns} />
-      </div>
+      {loading ?
+        <>
+          <Loading />
+          <div className='opacity-20'>
+            <Grid container spacing={2}>
+              <Grid item xs={6}>
+                <p className='text-xl'><span><ContactPhoneIcon className='mr-5 w-72' /></span>Hotline</p>
+              </Grid>
+              <Grid item xs={6}>
+                <DialogsHotline />
+              </Grid>
+            </Grid>
+            <div style={{ height: 400, width: 'auto' }}>
+              <DataGrid rows={rows} columns={columns} />
+            </div>
+          </div>
+        </>
+        :
+        <>
+          <Grid container spacing={2}>
+            <Grid item xs={6}>
+              <p className='text-xl'><span><ContactPhoneIcon className='mr-5 w-72' /></span>Hotline</p>
+            </Grid>
+            <Grid item xs={6}>
+              <DialogsHotline />
+            </Grid>
+          </Grid>
+          <div style={{ height: 400, width: 'auto' }}>
+            <DataGrid rows={rows} columns={columns} />
+          </div>
+        </>
+      }
     </>
   );
 }
