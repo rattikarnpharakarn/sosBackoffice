@@ -91,10 +91,14 @@ export default function DialogsMessage(props) {
 
     const handleOpen = () => {
         setOpen(true);
-        setName('')
+
     };
     const handleClose = () => {
         setOpen(false);
+        if (!props?.data) {
+            setName('')
+        }
+
     };
 
     useEffect(() => {

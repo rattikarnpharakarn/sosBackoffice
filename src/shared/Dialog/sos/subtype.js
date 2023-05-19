@@ -100,10 +100,13 @@ export default function DialogsSubtype(props) {
     };
     const handleClose = () => {
         setOpen(false);
-        setImage('')
-        setImageType('')
-        setNameType('')
-        setType('')
+        if (!props.data) {
+            setImage('')
+            setImageType('')
+            setNameType('')
+            setType('')
+          }
+       
     };
 
     const onImageProfile = (event) => {

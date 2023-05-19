@@ -120,7 +120,7 @@ const Type = () => {
               
                 return (
                     <>
-                        <img src={`data:image/jpeg;base64,${params.row.imageType}`} />
+                        <img src={`data:image/jpeg;base64,${params.row.imageType}`} className='w-20 h-20 p-2' />
                     </>
                 );
             }
@@ -192,7 +192,7 @@ const Type = () => {
                     <div className='opacity-20'>
                         <Grid container spacing={2}>
                             <Grid item xs={6}>
-                                <p className='text-xl'><span><SosIcon className='mr-5' /></span>UserManagement</p>
+                                <p className='text-xl'><span><SosIcon className='mr-5' /></span></p>
                             </Grid>
                             <Grid item xs={6}>
                                 <DialogsSos />
@@ -207,7 +207,7 @@ const Type = () => {
                 <>
                     <Grid container spacing={2}>
                         <Grid item xs={6}>
-                            <p className='text-xl'><span><SosIcon className='mr-5' /></span>UserManagement</p>
+                            <p className='text-xl'><span><SosIcon className='mr-5' /></span>Type Management</p>
                         </Grid>
                         <Grid item xs={6}>
                             <DialogsSos />

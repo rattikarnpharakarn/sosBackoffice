@@ -122,7 +122,7 @@ const SubType = () => {
                
                 return (
                     <>
-                        <img src={`data:image/jpeg;base64,${params.row.imageSubType}`} />
+                        <img src={`data:image/jpeg;base64,${params.row.imageSubType}`} className='w-20 h-20 p-2'/>
                     </>
                 );
             }

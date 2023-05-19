@@ -75,7 +75,7 @@ BootstrapDialogTitle.propTypes = {
 };
 
 export default function DialogsHotline(props) {
- 
+
   const [open, setOpen] = useState(false);
   const [number, setNumber] = useState(props.data?.row?.number);
   const [description, setDescription] = useState(props.data?.row?.description);
@@ -84,12 +84,16 @@ export default function DialogsHotline(props) {
 
   const handleOpen = () => {
     setOpen(true);
-    setNumber('');
-    setDescription('');
+
 
   };
   const handleClose = () => {
     setOpen(false);
+    if (!props.data) {
+      setNumber('');
+      setDescription('');
+    }
+
   };
 
   const onSubmit = async () => {
@@ -107,7 +111,7 @@ export default function DialogsHotline(props) {
         // const { data } = await axios.get(apiUrl, { 'headers': { 'Authorization': AuthStr } });
         axios.put(apiUrl, payload, { headers })
           .then(response => {
-       
+
             window.location.reload();
 
           })
@@ -131,11 +135,11 @@ export default function DialogsHotline(props) {
         const AuthStr = 'Bearer '.concat(token);
         const headers = { 'Authorization': AuthStr };
         const apiUrl = 'http://localhost:82/SosApp/hotline/admin/';
-       
+
         // const { data } = await axios.get(apiUrl, { 'headers': { 'Authorization': AuthStr } });
         await axios.post(apiUrl, payload, { headers })
           .then(response => {
-       
+
             window.location.reload();
 
           })
@@ -186,10 +190,10 @@ export default function DialogsHotline(props) {
           >
             <div className="grid gap-6">
               <div className="flex space-x-4">
-                <Input label="Name" value={description} onChange={(e) => setDescription(e.target.value)} />
+                <Input type="text" label="Name" value={description} onChange={(e) => setDescription(e.target.value)} />
               </div>
               <div className="flex space-x-4" >
-                <Input label="Phone number" value={number} onChange={(e) => setNumber(e.target.value)}/>
+                <Input type="number" label="Phone number" value={number} onChange={(e) => setNumber(e.target.value)} />
               </div>
             </div>
           </Box>

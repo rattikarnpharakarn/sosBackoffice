@@ -87,12 +87,15 @@ export default function DialogsSos(props) {
 
     const handleOpen = () => {
         setOpen(true);
-        setNameType('');
-        setImageType('');
+       
 
     };
     const handleClose = () => {
         setOpen(false);
+        if (!props.data) {
+            setNameType('');
+            setImageType('');
+          }
     };
 
     const onImageType = (event) => {

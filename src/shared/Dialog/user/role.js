@@ -84,7 +84,10 @@ export default function DialogsRole(props) {
   };
   const handleClose = () => {
     setOpen(false);
-    setRole('');
+    if (!props.data) {
+      setRole('');
+    }
+
   };
 
 

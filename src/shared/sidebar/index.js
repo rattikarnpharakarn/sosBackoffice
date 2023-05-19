@@ -184,7 +184,7 @@ const Sidebar = () => {
             </DrawerHeader>
             <Divider />
             <List>
-              <ListItem disablePadding sx={{ display: "block" }}>
+              {/* <ListItem disablePadding sx={{ display: "block" }}>
                 <ListItemButton
                   sx={{
                     minHeight: 48,
@@ -208,7 +208,7 @@ const Sidebar = () => {
 
                   <ListItemText primary="Home" sx={{ opacity: open ? 1 : 0 }} />
                 </ListItemButton>
-              </ListItem>
+              </ListItem> */}
 
               <ListItem
                 disablePadding

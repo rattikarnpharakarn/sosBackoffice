@@ -95,27 +95,30 @@ const DialogUser = (props) => {
 
   const handleOpen = () => setOpen(!open);
   const handleClose = () => {
-    setUsername('')
-    setEmail('')
-    setAddress('')
-    setBirthday('')
-    setCfPassword('')
-    setPassword('')
-    setCountry('')
-    setUsername('')
-    setDistrict('')
-    setFname('')
-    setGender('')
-    setLname('')
-    setIdcard('')
-    setImgCard('')
-    setImgProfile('')
-    setSubdistrict('')
-    setProvince('')
-    setPostalCode('')
-    setCountry('')
-    setShowProfile('')
-    setRole('')
+    if (!props.data) {
+      setUsername('')
+      setEmail('')
+      setAddress('')
+      setBirthday('')
+      setCfPassword('')
+      setPassword('')
+      setCountry('')
+      setUsername('')
+      setDistrict('')
+      setFname('')
+      setGender('')
+      setLname('')
+      setIdcard('')
+      setImgCard('')
+      setImgProfile('')
+      setSubdistrict('')
+      setProvince('')
+      setPostalCode('')
+      setCountry('')
+      setShowProfile('')
+      setRole('')
+    }
+
 
 
     setOpen(!open);
@@ -140,11 +143,11 @@ const DialogUser = (props) => {
         if (type === 'image/jpeg') {
           const result = reader.result.replace("data:image/jpeg;base64,", "");
           setImgProfile(result)
-         
+
         } else {
           const result = reader.result.replace("data:image/png;base64,", "");
           setImgProfile(result)
-       
+
         }
 
 
@@ -160,20 +163,27 @@ const DialogUser = (props) => {
 
   const onImageCard = (event) => {
     if (event.target.files && event.target.files[0]) {
+      setShowProfile(URL.createObjectURL(event.target.files[0]));
+
       let reader = new FileReader();
       reader.readAsDataURL(event.target.files[0]);
       const type = event.target.files[0].type
 
-      if (type === 'image/jpeg') {
-        const result = reader.result.replace("data:image/jpeg;base64,", "");
-        setImgCard(result)
-      
-      } else {
-        const result = reader.result.replace("data:image/png;base64,", "");
-        setImgCard(result)
-      
-      }
+      reader.onload = function () {
+        //   console.log(reader.result);
+        if (type === 'image/jpeg') {
+          const result = reader.result.replace("data:image/jpeg;base64,", "");
+          setImgCard(result)
 
+        } else {
+          const result = reader.result.replace("data:image/png;base64,", "");
+          setImgCard(result)
+
+        }
+
+
+
+      };
       reader.onerror = function (error) {
         console.log('Error: ', error);
       };
@@ -184,16 +194,17 @@ const DialogUser = (props) => {
   const onRole = (e) => {
 
     setRole(e)
-  
+
   }
   const onGender = (e) => {
 
     setGender(e)
-   
+
   }
 
 
   const onSubmit = async () => {
+    console.log(imgCard)
     const payload = {
       phoneNumber: username ? username : username === '' ? '' : props.data?.row?.phoneNumber,
       password: password,
@@ -254,11 +265,11 @@ const DialogUser = (props) => {
 
     } else {
       try {
-        const AuthStr = 'Bearer '.concat('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6ImFkbWluIiwiZXhwIjoxNjg2Mzg5MDc0fQ.eEkGAKDc2HbUDWrngr4y19LYkyOnfLc10Ihhbh_KTzg');
+        const token = localStorage.getItem('token');
+        const AuthStr = 'Bearer '.concat(token);
         const headers = { 'Authorization': AuthStr };
         const apiUrl = 'http://localhost:80/SosApp/accounts/admin/user';
-        const config = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6ImFkbWluIiwiZXhwIjoxNjg2Mzg5MDc0fQ.eEkGAKDc2HbUDWrngr4y19LYkyOnfLc10Ihhbh_KTzg';
-        // const { data } = await axios.get(apiUrl, { 'headers': { 'Authorization': AuthStr } });
+
         await axios.post(apiUrl, payload, { headers })
           .then(response => {
             // If request is good...
@@ -267,6 +278,7 @@ const DialogUser = (props) => {
 
           })
           .catch((error) => {
+
             console.log('error ' + error);
           });
         // return data;
@@ -285,7 +297,7 @@ const DialogUser = (props) => {
 
 
 
-  
+
   return (
     <div className='text-right mb-5'>
       {props.data?.id ?
@@ -317,13 +329,56 @@ const DialogUser = (props) => {
           >
             <div className="grid gap-6">
               <div className='flex justify-center'>
-                {props.data?.id || isprofile ?
+                {/* {props.data?.id || isprofile ?
                   <img className='w-28 h-28 p-1 rounded-full ring-2 ring-gray-300 dark:ring-gray-500'
                     src={isprofile} alt="profile photo" />
                   :
                   <img className='w-28 h-28 p-1 rounded-full ring-2 ring-gray-300 dark:ring-gray-500'
                     src={profile} alt="profile photo" />
+                } */}
+                {/* {props.data?.row?.imageProfile + 'a'} */}
+                {imgprofile && props.data?.id &&
+                  <div className="flex justify-center">
+                    <img className='w-28 h-28 p-1 rounded-full ring-2 ring-gray-300 dark:ring-gray-500'
+                      src={isprofile} alt="profile photo" />
+                   
+                  </div>
                 }
+
+                {
+                  !props.data?.id && (!imgprofile) && !props.data?.row?.imageProfile &&
+                  <div className="flex justify-center">
+                    <img className='w-28 h-28 p-1 rounded-full ring-2 ring-gray-300 dark:ring-gray-500'
+                      src={profile} alt="profile photo" />
+                   
+                  </div>
+                }
+
+                {
+                  props.data?.id && (!imgprofile) && !props.data?.row?.imageProfile &&
+                  <div className="flex justify-center">
+                    <img className='w-28 h-28 p-1 rounded-full ring-2 ring-gray-300 dark:ring-gray-500'
+                      src={profile} alt="profile photo" />
+                   
+                  </div>
+                }
+                {
+                  props.data?.row?.imageProfile && (!imgprofile) &&
+                  <div className="flex justify-center">
+                    <img className='w-28 h-28 p-1 rounded-full ring-2 ring-gray-300 dark:ring-gray-500'
+                      src={`data:image/jpeg;base64,${props.data?.row?.imageProfile}`} alt="profile photo" />
+                  
+                  </div>
+                }
+                {
+                  imgprofile && (!props.data?.id) &&
+                  <div className="flex justify-center">
+                    <img className='w-28 h-28 p-1 rounded-full ring-2 ring-gray-300 dark:ring-gray-500'
+                      src={isprofile} alt="profile photo" />
+                   
+                  </div>
+                }
+
 
               </div>
               <div className='flex justify-center'>

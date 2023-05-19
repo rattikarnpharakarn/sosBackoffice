@@ -26,12 +26,12 @@ const AuthenProvider = () => {
         path="/login"
         element={<Login />}
       />
-      <Route
+      {/* <Route
         path="/"
         element={<HomePage />}
-      />
+      /> */}
       <Route
-        path="/user"
+        path="/"
         element={<UserManagement />}
       />
       <Route

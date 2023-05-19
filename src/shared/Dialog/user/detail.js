@@ -11,39 +11,15 @@ import CloseIcon from '@mui/icons-material/Close';
 import Box from '@mui/material/Box';
 import axios from 'axios';
 import TextField from '@mui/material/TextField';
-import EditIcon from '@mui/icons-material/Edit';
 import Grid from '@mui/material/Grid';
-import RadioGroup from '@mui/material/RadioGroup';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import FormControl from '@mui/material/FormControl';
-import FormLabel from '@mui/material/FormLabel';
-import InputLabel from '@mui/material/InputLabel';
-import MenuItem from '@mui/material/MenuItem';
 import moment from 'moment';
 import TaskAltIcon from '@mui/icons-material/TaskAlt';
 import Button from '@mui/material/Button';
 
-import {
-    // Button,
-    DialogHeader,
-    DialogBody,
-    DialogFooter,
-    Input,
-    Textarea,
-    Radio,
-    Select,
-    Option
-} from "@material-tailwind/react";
-import { XMarkIcon } from "@heroicons/react/24/solid";
+
+
 import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
-import ForumIcon from '@mui/icons-material/Forum';
-import ThreePIcon from '@mui/icons-material/ThreeP';
-import PersonIcon from '@mui/icons-material/Person';
-import SpeakerNotesIcon from '@mui/icons-material/SpeakerNotes';
-import ArticleIcon from '@mui/icons-material/Article';
-import SosIcon from '@mui/icons-material/Sos';
-import LocalPhoneIcon from '@mui/icons-material/LocalPhone';
-import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
+
 
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
@@ -87,7 +63,7 @@ BootstrapDialogTitle.propTypes = {
 };
 
 export default function DialogDetail(props) {
-  
+
     const [open, setOpen] = useState(false);
     const [nameType, setNameType] = useState(props.data?.row?.nameType);
     const [imageType, setImageType] = useState(props.data?.row?.imageType);
@@ -103,11 +79,13 @@ export default function DialogDetail(props) {
         fetchData()
     };
     const handleClose = () => {
-        setNameType('');
+        if (!props.data) {
+            setNameType('');
         setImageType('');
-        setData('');
         setDetail(false);
         setDescription('');
+          }
+       
 
         setOpen(false);
     };
@@ -125,21 +103,16 @@ export default function DialogDetail(props) {
             const AuthStr = 'Bearer '.concat(token);
             const headers = { 'Authorization': AuthStr };
             const apiUrl = `http://localhost:80/SosApp/accounts/admin/user/verifyIDCard/${props?.id}`;
-
-            // const { data } = await axios.get(apiUrl, { 'headers': { 'Authorization': AuthStr } });
             await axios.put(apiUrl, payload, { headers })
                 .then(response => {
-                    // If request is good...
-                    console.log(response.data.data);
-                    // window.location.reload();
-
+                    window.location.reload();
                 })
                 .catch((error) => {
                     console.log('error ' + error);
                 });
-            // return data;
+
         } catch (error) {
-            // throw new Error(error);
+
             console.error(error);
             return error.response;
         }
@@ -149,13 +122,14 @@ export default function DialogDetail(props) {
 
     const fetchData = async () => {
         try {
-            const AuthStr = 'Bearer '.concat('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6ImFkbWluIiwiZXhwIjoxNjg2Mzg5MDc0fQ.eEkGAKDc2HbUDWrngr4y19LYkyOnfLc10Ihhbh_KTzg');
+            const token = localStorage.getItem('token')
+            const AuthStr = 'Bearer '.concat(token);
             const apiUrl = `http://localhost:80/SosApp/accounts/admin/user/${props.id}`;
             const config = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6ImFkbWluIiwiZXhwIjoxNjg2Mzg5MDc0fQ.eEkGAKDc2HbUDWrngr4y19LYkyOnfLc10Ihhbh_KTzg';
-            // const { data } = await axios.get(apiUrl, { 'headers': { 'Authorization': AuthStr } });
+
             axios.get(apiUrl, { headers: { Authorization: AuthStr } })
                 .then(response => {
-                
+
                     setData(response.data.data);
 
                 })
@@ -170,7 +144,7 @@ export default function DialogDetail(props) {
         }
     }
 
-   
+
     // const image = data?.imageProfile
     const image = data?.imageProfile.replace("data:image/png;base64,", "");
     const image2 = data?.idCard?.pathImage.replace("data:image/png;base64,", "");
@@ -266,7 +240,7 @@ export default function DialogDetail(props) {
                                             <>
                                                 <div item xs={6}>
                                                     <img src={`data:image/jpeg;base64,${image2}`} />
-                                                    {`data:image/jpeg;base64,${image2}`}
+                                                
                                                     <div className='text-center mb-5'>
                                                         <span className='mr-5'>รหัสบัตรประชาชน: </span> <span className='text-xl mb-5'>{data?.idCard?.textIDCard}</span>
                                                     </div>

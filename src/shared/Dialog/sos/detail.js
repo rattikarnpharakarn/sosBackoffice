@@ -99,6 +99,7 @@ export default function DetailDialogs(props) {
     };
     const handleClose = () => {
         setOpen(false);
+        
     };
 
     const onImageProfile = (event) => {
