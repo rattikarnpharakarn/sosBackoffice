@@ -80,7 +80,7 @@ BootstrapDialogTitle.propTypes = {
 };
 
 export default function DialogsMessage(props) {
-    
+
     const [open, setOpen] = useState(false);
     const [number, setNumber] = useState(props.data?.row?.number);
     const [description, setDescription] = useState(props.data?.row?.description);
@@ -104,7 +104,7 @@ export default function DialogsMessage(props) {
                 const AuthStr = 'Bearer '.concat(token);
                 const apiUrl = `http://localhost:83/SosApp/messenger/admin/chat/message/${Number(props.data?.row?.roomChatID)}`;
                 const res = await axios.get(apiUrl, { headers: { Authorization: AuthStr } })
-          
+
                 setRows(res.data.data)
                 res.data?.dat?.map((a) => {
                     setName(a?.roomName)
@@ -136,7 +136,7 @@ export default function DialogsMessage(props) {
                     <Box
                         component="form"
                         sx={{
-                            '& .MuiTextField-root': { m: 1, width: '25ch' },
+                            '& .MuiTextField-root': { m: 1, width: 500 },
                         }}
                         noValidate
                         autoComplete="off"
@@ -152,6 +152,7 @@ export default function DialogsMessage(props) {
                                         {Number(props.data?.row?.roomChatID) === item.roomChatID ?
 
                                             <>
+                                                <p>user: {item.senderUsername}</p>
                                                 <div className="flex " key={item.id}>
 
                                                     <div className="mr-5 ">
