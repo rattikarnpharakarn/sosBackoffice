@@ -42,6 +42,7 @@ import ArticleIcon from '@mui/icons-material/Article';
 import SosIcon from '@mui/icons-material/Sos';
 import LocalPhoneIcon from '@mui/icons-material/LocalPhone';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
+import Grid from '@mui/material/Grid';
 
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
@@ -85,7 +86,7 @@ BootstrapDialogTitle.propTypes = {
 };
 
 export default function DetailDialogs(props) {
-    console.log(props);
+
     const [open, setOpen] = useState(false);
     const [nameType, setNameType] = useState(props.data?.row?.nameType);
     const [imageType, setImageType] = useState(props.data?.row?.imageType);
@@ -102,8 +103,6 @@ export default function DetailDialogs(props) {
 
     const onImageProfile = (event) => {
         if (event.target.files && event.target.files[0]) {
-            //   setShowProfile(URL.createObjectURL(event.target.files[0]));
-
             const type = event.target.files[0].type
             let reader = new FileReader();
             reader.readAsDataURL(event.target.files[0]);
@@ -112,11 +111,11 @@ export default function DetailDialogs(props) {
                 if (type === 'image/jpeg') {
                     const result = reader.result.replace("data:image/jpeg;base64,", "");
                     setImageType(result)
-                    console.log(result);
+                    
                 } else {
                     const result = reader.result.replace("data:image/png;base64,", "");
                     setImageType(result)
-                    console.log(result);
+                   
                 }
 
 
@@ -130,29 +129,24 @@ export default function DetailDialogs(props) {
 
     const fetchData = async () => {
         try {
-            const AuthStr = 'Bearer '.concat('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6ImFkbWluIiwiZXhwIjoxNjg2Mzg5MDc0fQ.eEkGAKDc2HbUDWrngr4y19LYkyOnfLc10Ihhbh_KTzg');
+            const token = localStorage.getItem('token');
+            const AuthStr = 'Bearer '.concat(token);
             const apiUrl = `http://localhost:81/SosApp/emergency/admin/${props.id}`;
-            const config = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6ImFkbWluIiwiZXhwIjoxNjg2Mzg5MDc0fQ.eEkGAKDc2HbUDWrngr4y19LYkyOnfLc10Ihhbh_KTzg';
             // const { data } = await axios.get(apiUrl, { 'headers': { 'Authorization': AuthStr } });
-            axios.get(apiUrl, { headers: { Authorization: AuthStr } })
+            await axios.get(apiUrl, { headers: { Authorization: AuthStr } })
                 .then(response => {
-                    // If request is good...
-                    console.log(response.data.data);
                     setData(response.data.data);
-
                 })
                 .catch((error) => {
                     console.log('error ' + error);
                 });
-            // return data;
         } catch (error) {
-            // throw new Error(error);
             console.error(error);
             return error.response;
         }
     }
 
-    console.log(data);
+ 
 
     return (
         <div className='text-right mb-5'>
@@ -178,16 +172,22 @@ export default function DetailDialogs(props) {
                     >
                         <div className="grid gap-6">
                             <div className="grid gap-6" >
-                                <p className="text-xl font-bold">{data?.description}</p>
+                                <p className="text-xl font-bold"><span className="mr-4">รายละเอียดการแจ้งเหตุ: </span>{data?.description}</p>
                                 <p className="txet-lg ml-2 mb-2"><span><ArticleIcon className="mr-4" />{data?.subTypeName}</span></p>
                                 <p className="txet-lg ml-2 mb-2"><span><LocalPhoneIcon className="mr-4" />{data?.phoneNumberCallBack}</span></p>
                                 <p className="txet-lg ml-2 mb-2"><span><CalendarMonthIcon className="mr-4" />{moment(data?.date).format('MM/DD/YYYY')}</span></p>
                                 <p className="txet-lg ml-2 mb-2"><span><span className="mr-4 font-bold">Status</span>{data?.status}</span></p>
-                                {data?.image.map((img,i) => (
-                                    <p className="txet-lg ml-2 mb-2" key={i}>   <img src={img.Image} /></p>
-                                   
+                                <Grid container spacing={2}>
+                                    {data?.image.map((img, i) => (
+                                        <Grid item xs={4}>
+
+                                            <img src={img.Image} />
+
+                                        </Grid>
                                     ))
-                                }
+                                    }
+                                </Grid>
+
                             </div>
                         </div>
 

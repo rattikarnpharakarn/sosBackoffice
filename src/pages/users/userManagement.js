@@ -1,25 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { DataGrid, GridActionsCellItem, GridToolbar, GridRowsProp, GridColDef } from '@mui/x-data-grid';
 import DeleteIcon from '@mui/icons-material/Delete';
-import SecurityIcon from '@mui/icons-material/Security';
-import FileCopyIcon from '@mui/icons-material/FileCopy';
-import { randomCreatedDate, randomUpdatedDate } from '@mui/x-data-grid-generator';
-import EditIcon from '@mui/icons-material/Edit';
-import ViewColumnIcon from '@mui/icons-material/ViewColumn';
-import Button from '@mui/material/Button';
-import Dialogs from '../../shared/Dialog/user';
 import PropTypes from 'prop-types';
 import Avatar from '@mui/material/Avatar';
-import Stack from '@mui/material/Stack';
-import { GetAllUser } from '../../services/api';
+
+
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import moment from 'moment';
 import Grid from '@mui/material/Grid';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import DialogUser from '../../shared/Dialog/user';
+import DialogUser from '../../shared/Dialog/user/index';
 import Loading from '../../shared/Loading/index';
-import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
+
 import DialogDetail from '../../shared/Dialog/user/detail';
 
 function RenderDate(props) {
@@ -45,7 +38,7 @@ function RenderDate(props) {
 const initialRows = [
   {
     id: 1, col1: 'Avartar', col2: 'World', col3: 'a@email.coms',
-    col4: '12345678901', col5: 'Image id', col6: 'Female', col7: true, 
+    col4: '12345678901', col5: 'Image id', col6: 'Female', col7: true,
   },
 ];
 
@@ -62,62 +55,59 @@ RenderDate.propTypes = {
 };
 
 const UserManagement = () => {
-  const navigate = useNavigate();
-  const [data, setData] = useState();
+  const Swal = require('sweetalert2')
   const [rows, setRows] = useState(initialRows);
   const [loading, setLoading] = useState(false);
 
   const Delete = React.useCallback(
     (id) => () => {
-      try {
-        const AuthStr = 'Bearer '.concat('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6ImFkbWluIiwiZXhwIjoxNjg2Mzg5MDc0fQ.eEkGAKDc2HbUDWrngr4y19LYkyOnfLc10Ihhbh_KTzg');
-        const headers = { 'Authorization': AuthStr };
-        const apiUrl = `http://localhost:80/SosApp/accounts/admin/user/${id}`;
-        const config = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6ImFkbWluIiwiZXhwIjoxNjg2Mzg5MDc0fQ.eEkGAKDc2HbUDWrngr4y19LYkyOnfLc10Ihhbh_KTzg';
-        // const { data } = await axios.get(apiUrl, { 'headers': { 'Authorization': AuthStr } });
-        axios.delete(apiUrl, { headers })
-          .then(response => {
-            // If request is good...
-            console.log(response.data.data);
-            window.location.reload();
 
-          })
-          .catch((error) => {
-            console.log('error ' + error);
-          });
-        // return data;
-      } catch (error) {
-        // throw new Error(error);
-        console.error(error);
-        return error.response;
-      }
+      Swal.fire({
+        title: 'Are you sure?',
+        text: "You won't be able to revert this!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, delete it!'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          try {
+            const token = localStorage.getItem('token')
+            const AuthStr = 'Bearer '.concat(token);
+            const headers = { 'Authorization': AuthStr };
+            const apiUrl = `http://localhost:80/SosApp/accounts/admin/user/${id}`;
+            axios.delete(apiUrl, { headers })
+              .then(response => {
+                Swal.fire(
+                  {
+                    title: 'Deleted',
+                    text: "Your file has been deleted.",
+                    icon: 'warning',
+                    confirmButtonText: 'Ok'
+                  }
+                ).then((result) => {
+                  if (result.isConfirmed) {
+                    window.location.reload();
+                  }
+                })
+              })
+              .catch((error) => {
+                console.log('error ' + error);
+              });
+          } catch (error) {
+            console.error(error);
+            return error.response;
+          }
+
+        }
+      })
     },
     [],
   );
 
-  const toggleAdmin = React.useCallback(
-    (id) => () => {
-      setRows((prevRows) =>
-        prevRows.map((row) =>
-          row.id === id ? { ...row, isAdmin: !row.isAdmin } : row,
-        ),
-      );
-    },
-    [],
-  );
 
-  const Detail = React.useCallback(
-    (id) => () => {
-      navigate(`/detail/${id} `)
-    },
-    [],
-
-  )
-
-
-  const Edit = (data) => {
-    <DialogUser props={data} />
-  }
+ 
 
 
   const columns = [
@@ -127,7 +117,7 @@ const UserManagement = () => {
     { field: 'lastName', headerName: 'Last Name', width: 200 },
     { field: 'birthday', headerName: 'Birthday', width: 200, valueFormatter: ({ value }) => moment(value).format('MM/DD/YYYY') },
     { field: 'gender', headerName: 'Gender', width: 120, valueFormatter: ({ value }) => value === 'F' ? 'Female' : 'Male' },
-    // { field: 'idCard', headerName: 'ID Card',   width: 120, valueFormatter: ({ value }) => value?.textIDCard } ,
+ 
     {
       field: 'idCard', headerName: 'Verify ID Card', width: 120, valueFormatter: ({ value }) => value?.verify === true ? 'Yes' : 'No',
 
@@ -147,19 +137,9 @@ const UserManagement = () => {
           onClick={Delete(params.id)}
           showInMenu
         />,
-        <DialogDetail id={params.id}/>
-
-        // <GridActionsCellItem
-        //   icon={<ViewColumnIcon />}
-        //   label="Detail"
-        //   onClick={Detail(params.id)}
-        //   showInMenu
-        // />,
+        <DialogDetail id={params.id} />
       ],
-      // renderCell: (params) => {
-      // return  <DialogUser props={params} />;
-
-      // }
+   
     },
 
   ]
@@ -169,16 +149,16 @@ const UserManagement = () => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const AuthStr = 'Bearer '.concat('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6ImFkbWluIiwiZXhwIjoxNjg2Mzg5MDc0fQ.eEkGAKDc2HbUDWrngr4y19LYkyOnfLc10Ihhbh_KTzg');
+        const token = localStorage.getItem('token')
+        const AuthStr = 'Bearer '.concat(token);
         const apiUrl = 'http://localhost:80/SosApp/accounts/admin/user';
-        const config = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6ImFkbWluIiwiZXhwIjoxNjg2Mzg5MDc0fQ.eEkGAKDc2HbUDWrngr4y19LYkyOnfLc10Ihhbh_KTzg';
-        // const { data } = await axios.get(apiUrl, { 'headers': { 'Authorization': AuthStr } });
+
         await axios.get(apiUrl, { headers: { Authorization: AuthStr } })
           .then(response => {
-            // If request is good...
-            console.log(response.data.data);
+           
+         
             setRows(response.data.data);
-            console.log(rows);
+           
             setLoading(false);
           })
           .catch((error) => {
@@ -186,10 +166,15 @@ const UserManagement = () => {
 
             console.log('error ' + error);
           });
-        // return data;
+    
       } catch (error) {
-        // throw new Error(error);
-        console.error(error);
+    
+        Swal.fire({
+          title: 'Error!',
+          text: `${error.response.data.message}`,
+          icon: 'error',
+          confirmButtonText: 'Close'
+        })
         return error.response;
       } finally {
         setLoading(false);

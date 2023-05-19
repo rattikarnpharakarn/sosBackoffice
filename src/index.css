@@ -2,6 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
+
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
@@ -15,3 +16,18 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+.is-invalid {
+  border-color: red;
+}
+input:invalid {
+  border-color: red;
+}
+
+.invalid-feedback {
+  color: red;
+}
+.valid-feedback {
+  color: green;
+}
+

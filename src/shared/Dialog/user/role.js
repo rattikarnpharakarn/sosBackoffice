@@ -74,8 +74,7 @@ BootstrapDialogTitle.propTypes = {
 };
 
 export default function DialogsRole(props) {
-  console.log(props);
-
+  const Swal = require('sweetalert2')
   const [open, setOpen] = React.useState(false);
   const [role, setRole] = React.useState(props.data?.row?.name);
 
@@ -85,48 +84,49 @@ export default function DialogsRole(props) {
   };
   const handleClose = () => {
     setOpen(false);
+    setRole('');
   };
 
 
-  const onSubmit = () => {
+  const onSubmit = async () => {
     const payload = {
       name: role ? role : role === '' ? '' : props.data?.row?.name,
     }
     if (props.data?.id) {
       try {
-        const AuthStr = 'Bearer '.concat('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6ImFkbWluIiwiZXhwIjoxNjg2Mzg5MDc0fQ.eEkGAKDc2HbUDWrngr4y19LYkyOnfLc10Ihhbh_KTzg');
+        const token = localStorage.getItem('token');
+        const AuthStr = 'Bearer '.concat(token);
         const headers = { 'Authorization': AuthStr };
         const apiUrl = `http://localhost:80/SosApp/accounts/admin/role/${props.data?.id}`;
-        const config = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6ImFkbWluIiwiZXhwIjoxNjg2Mzg5MDc0fQ.eEkGAKDc2HbUDWrngr4y19LYkyOnfLc10Ihhbh_KTzg';
-        // const { data } = await axios.get(apiUrl, { 'headers': { 'Authorization': AuthStr } });
-        axios.put(apiUrl, payload, { headers })
-          .then(response => {
-            // If request is good...
-            console.log(response.data.data);
-            window.location.reload();
 
+        await axios.put(apiUrl, payload, { headers })
+          .then(response => {
+            window.location.reload();
           })
           .catch((error) => {
             console.log('error ' + error);
           });
         // return data;
       } catch (error) {
-        // throw new Error(error);
-        console.error(error);
+        Swal.fire({
+          title: 'Error!',
+          text: `${error.response.data.message}`,
+          icon: 'error',
+          confirmButtonText: 'Close'
+        })
         return error.response;
       }
 
     } else {
       try {
-        const AuthStr = 'Bearer '.concat('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6ImFkbWluIiwiZXhwIjoxNjg2Mzg5MDc0fQ.eEkGAKDc2HbUDWrngr4y19LYkyOnfLc10Ihhbh_KTzg');
+        const token = localStorage.getItem('token');
+        const AuthStr = 'Bearer '.concat(token);
         const headers = { 'Authorization': AuthStr };
         const apiUrl = 'http://localhost:80/SosApp/accounts/admin/role';
-        const config = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6ImFkbWluIiwiZXhwIjoxNjg2Mzg5MDc0fQ.eEkGAKDc2HbUDWrngr4y19LYkyOnfLc10Ihhbh_KTzg';
-        // const { data } = await axios.get(apiUrl, { 'headers': { 'Authorization': AuthStr } });
-        axios.post(apiUrl, payload, { headers })
+
+        await axios.post(apiUrl, payload, { headers })
           .then(response => {
-            // If request is good...
-            console.log(response.data.data);
+
             window.location.reload();
 
           })
@@ -135,8 +135,12 @@ export default function DialogsRole(props) {
           });
         // return data;
       } catch (error) {
-        // throw new Error(error);
-        console.error(error);
+        Swal.fire({
+          title: 'Error!',
+          text: `${error.response.data.message}`,
+          icon: 'error',
+          confirmButtonText: 'Close'
+        })
         return error.response;
       }
     }

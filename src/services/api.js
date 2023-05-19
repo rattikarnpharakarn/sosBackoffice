@@ -12,7 +12,7 @@ export const GetAllUser = async () => {
     axios.get(apiUrl, { headers: { Authorization: AuthStr } })
       .then(response => {
         // If request is good...
-        console.log(response);
+        
       })
       .catch((error) => {
         console.log('error ' + error);

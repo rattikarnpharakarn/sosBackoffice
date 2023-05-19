@@ -80,15 +80,18 @@ BootstrapDialogTitle.propTypes = {
 };
 
 export default function DialogsMessage(props) {
-    console.log(props.data);
+    
     const [open, setOpen] = useState(false);
     const [number, setNumber] = useState(props.data?.row?.number);
     const [description, setDescription] = useState(props.data?.row?.description);
     const [rows, setRows] = useState();
+    const [name, setName] = useState();
+
 
 
     const handleOpen = () => {
         setOpen(true);
+        setName('')
     };
     const handleClose = () => {
         setOpen(false);
@@ -97,27 +100,16 @@ export default function DialogsMessage(props) {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const AuthStr = 'Bearer '.concat('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6ImFkbWluIiwiZXhwIjoxNjg2Mzg5MDc0fQ.eEkGAKDc2HbUDWrngr4y19LYkyOnfLc10Ihhbh_KTzg');
-                const apiUrl = `http://localhost:83/SosApp/messenger/admin/chat/message/${Number(props.data)}`;
-                const config = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6ImFkbWluIiwiZXhwIjoxNjg2Mzg5MDc0fQ.eEkGAKDc2HbUDWrngr4y19LYkyOnfLc10Ihhbh_KTzg';
-                // const { data } = await axios.get(apiUrl, { 'headers': { 'Authorization': AuthStr } });
+                const token = localStorage.getItem('token');
+                const AuthStr = 'Bearer '.concat(token);
+                const apiUrl = `http://localhost:83/SosApp/messenger/admin/chat/message/${Number(props.data?.row?.roomChatID)}`;
                 const res = await axios.get(apiUrl, { headers: { Authorization: AuthStr } })
-                console.log(res.data.data, 'a');
+          
                 setRows(res.data.data)
-                // .then(response => {
-                //     // If request is good...
-
-                //     setRows(response);
-                //     console.log(rows,'rows');
-                //     console.log(props.data,'id');
-                // })
-                // .catch((error) => {
-                //     console.log('error ' + error);
-                // });
-                // return data;
+                res.data?.dat?.map((a) => {
+                    setName(a?.roomName)
+                })
             } catch (error) {
-                // throw new Error(error);
-                console.error(error);
                 return error.response;
             }
         }
@@ -125,23 +117,20 @@ export default function DialogsMessage(props) {
         fetchData();
     }, []);
 
-    rows?.map((a) => {
-        console.log(a.roomChatID)
-        console.log(props.data)
-    })
+
 
     return (
         <div className='text-right mb-5'>
 
             <ForumIcon onClick={handleOpen} className="h-20 mt-4" />
-
             <BootstrapDialog
                 onClose={handleClose}
                 aria-labelledby="customized-dialog-title"
                 open={open}
             >
                 <BootstrapDialogTitle id="customized-dialog-title" onClose={handleClose}>
-                    {/* {props.data?.id ? 'Update User' : 'Create User'} */}
+                    <p className=""><span><ThreePIcon /></span>สมาชิก{props.data?.row?.roomName}</p>
+
                 </BootstrapDialogTitle>
                 <DialogContent dividers>
                     <Box
@@ -151,29 +140,51 @@ export default function DialogsMessage(props) {
                         }}
                         noValidate
                         autoComplete="off"
+                        className="flex flex-col items-center justify-center w-full min-h-full bg-gray-100 text-gray-800 p-10"
                     >
-                        {rows?.map((item) => (
-                           
-                            <>
-                                {Number(props.data) === item.roomChatID ?
-                                    <div className="grid gap-6" key={item.id}>
-                                        <p className=""><span><ThreePIcon/></span>{item.roomName}</p>
-                                        <p className="ml-2 mb-10"><span><PersonIcon/></span>user : <span><SpeakerNotesIcon/></span>{item.message}</p>
-                                    
-                                       
-                                    </div>
-                                    :
-                                    null
-                                }
-                            </>
-                        ))}
+
+                        <div class="flex w-full mt-2 space-x-3 max-w-xs">
+                            {/* <div class="flex-shrink-0 h-10 w-10 rounded-full bg-gray-300"></div> */}
+                            <div>
+                                {rows?.map((item) => (
+
+                                    <>
+                                        {Number(props.data?.row?.roomChatID) === item.roomChatID ?
+
+                                            <>
+                                                <div className="flex " key={item.id}>
+
+                                                    <div className="mr-5 ">
+                                                        <PersonIcon />
+
+                                                    </div>
+                                                    <div class="bg-gray-300 p-3 rounded-r-lg rounded-bl-lg mb-5">
+                                                        <p className="">
+                                                            {item.message}
+                                                        </p>
+                                                    </div>
+
+                                                </div>
+
+                                            </>
+
+                                            : null
+
+
+
+                                        }
+                                    </>
+                                ))}
+
+
+                            </div>
+                        </div>
+
 
                     </Box>
                 </DialogContent>
                 <DialogActions>
-                    <Button autoFocus >
-                        Save changes
-                    </Button>
+
                 </DialogActions>
             </BootstrapDialog>
         </div>

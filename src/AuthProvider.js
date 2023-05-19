@@ -9,7 +9,7 @@ import User from './pages/users';
 import UserManagement from './pages/users/userManagement';
 import RoleManagement from './pages/users/roleManagement';
 
-import Login from './pages/login';
+import Login from './pages/login/index.tsx';
 import Type from './pages/sos/type';
 import Subtype from './pages/sos/subtype';
 

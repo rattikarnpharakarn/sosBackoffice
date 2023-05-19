@@ -55,51 +55,59 @@ RenderDate.propTypes = {
 };
 
 const Hotline = () => {
-
   const [rows, setRows] = React.useState(initialRows);
   const [loading, setLoading] = useState(false);
+  const Swal = require('sweetalert2')
+
 
   const Delete = React.useCallback(
     (id) => () => {
-      try {
-        const AuthStr = 'Bearer '.concat('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6ImFkbWluIiwiZXhwIjoxNjg2Mzg5MDc0fQ.eEkGAKDc2HbUDWrngr4y19LYkyOnfLc10Ihhbh_KTzg');
-        const headers = { 'Authorization': AuthStr };
-        const apiUrl = `http://localhost:82/SosApp/hotline/admin/${id}`;
-        const config = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6ImFkbWluIiwiZXhwIjoxNjg2Mzg5MDc0fQ.eEkGAKDc2HbUDWrngr4y19LYkyOnfLc10Ihhbh_KTzg';
-        // const { data } = await axios.get(apiUrl, { 'headers': { 'Authorization': AuthStr } });
-        axios.delete(apiUrl, { headers })
-          .then(response => {
-            // If request is good...
-            console.log(response.data.data);
-            window.location.reload();
 
+      Swal.fire({
+        title: 'Are you sure?',
+        text: "You won't be able to revert this!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, delete it!'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          try {
+            const token = localStorage.getItem('token')
+            const AuthStr = 'Bearer '.concat(token);
+            const headers = { 'Authorization': AuthStr };
+            const apiUrl = `http://localhost:82/SosApp/hotline/admin/${id}`;
+            axios.delete(apiUrl, { headers })
+              .then(response => {
+                Swal.fire(
+                  {
+                    title: 'Deleted',
+                    text: "Your file has been deleted.",
+                    icon: 'warning',
+                    confirmButtonText: 'Ok'
+                  }
+                ).then((result) => {
+                  if (result.isConfirmed) {
+                    window.location.reload();
+                  }
+                })
+              })
+              .catch((error) => {
+                console.log('error ' + error);
+              });
+          } catch (error) {
+            console.error(error);
+            return error.response;
+          }
 
-          })
-          .catch((error) => {
-
-
-            console.log('error ' + error);
-          });
-        // return data;
-      } catch (error) {
-        // throw new Error(error);
-        console.error(error);
-        return error.response;
-      }
+        }
+      })
     },
     [],
   );
 
-  const toggleAdmin = React.useCallback(
-    (id) => () => {
-      setRows((prevRows) =>
-        prevRows.map((row) =>
-          row.id === id ? { ...row, isAdmin: !row.isAdmin } : row,
-        ),
-      );
-    },
-    [],
-  );
+
 
 
 
@@ -127,16 +135,17 @@ const Hotline = () => {
       setLoading(true);
 
       try {
-        const AuthStr = 'Bearer '.concat('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6ImFkbWluIiwiZXhwIjoxNjg2Mzg5MDc0fQ.eEkGAKDc2HbUDWrngr4y19LYkyOnfLc10Ihhbh_KTzg');
+        const token = localStorage.getItem('token')
+        const AuthStr = 'Bearer '.concat(token);
         const apiUrl = 'http://localhost:82/SosApp/hotline/';
-        const config = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6ImFkbWluIiwiZXhwIjoxNjg2Mzg5MDc0fQ.eEkGAKDc2HbUDWrngr4y19LYkyOnfLc10Ihhbh_KTzg';
+
         // const { data } = await axios.get(apiUrl, { 'headers': { 'Authorization': AuthStr } });
         await axios.get(apiUrl, { headers: { Authorization: AuthStr } })
           .then(response => {
             // If request is good...
-            console.log(response.data.data);
+      
             setRows(response.data.data);
-            console.log(rows);
+      
             setLoading(false);
 
           })
@@ -147,8 +156,12 @@ const Hotline = () => {
           });
         // return data;
       } catch (error) {
-        // throw new Error(error);
-        console.error(error);
+        Swal.fire({
+          title: 'Error!',
+          text: `${error.response.data.message}`,
+          icon: 'error',
+          confirmButtonText: 'Close'
+        })
         return error.response;
       } finally {
         setLoading(false);
@@ -158,7 +171,7 @@ const Hotline = () => {
 
     fetchData();
   }, []);
-  console.log(rows);
+
   return (
     <>
       {loading ?

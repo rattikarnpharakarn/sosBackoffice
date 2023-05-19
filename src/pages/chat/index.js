@@ -1,16 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { DataGrid, GridActionsCellItem, GridToolbar, GridRowsProp, GridColDef } from '@mui/x-data-grid';
 import DeleteIcon from '@mui/icons-material/Delete';
-import SecurityIcon from '@mui/icons-material/Security';
-import FileCopyIcon from '@mui/icons-material/FileCopy';
-import { randomCreatedDate, randomUpdatedDate } from '@mui/x-data-grid-generator';
-import EditIcon from '@mui/icons-material/Edit';
-import ViewColumnIcon from '@mui/icons-material/ViewColumn';
-import Button from '@mui/material/Button';
-import DialogsHotline from '../../shared/Dialog/hotline/index';
 import PropTypes from 'prop-types';
 import Avatar from '@mui/material/Avatar';
-import Stack from '@mui/material/Stack';
 import axios from 'axios';
 import Grid from '@mui/material/Grid';
 import ChatIcon from '@mui/icons-material/Chat';
@@ -57,52 +49,55 @@ RenderDate.propTypes = {
 };
 
 const Chat = () => {
-
   const [rows, setRows] = React.useState(initialRows);
   const [loading, setLoading] = useState(false);
-
-
-  //   const Delete = React.useCallback(
-  //     (id) => () => {
-  //         try {
-  //             const AuthStr = 'Bearer '.concat('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6ImFkbWluIiwiZXhwIjoxNjg2Mzg5MDc0fQ.eEkGAKDc2HbUDWrngr4y19LYkyOnfLc10Ihhbh_KTzg');
-  //             const headers = { 'Authorization': AuthStr };
-  //             const apiUrl = `http://localhost:82/SosApp/hotline/admin/${id}`;
-  //             const config = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6ImFkbWluIiwiZXhwIjoxNjg2Mzg5MDc0fQ.eEkGAKDc2HbUDWrngr4y19LYkyOnfLc10Ihhbh_KTzg';
-  //             // const { data } = await axios.get(apiUrl, { 'headers': { 'Authorization': AuthStr } });
-  //             axios.delete(apiUrl, { headers })
-  //                 .then(response => {
-  //                     // If request is good...
-  //                     console.log(response.data.data);
-  //                     window.location.reload();
-
-  //                 })
-  //                 .catch((error) => {
-  //                     console.log('error ' + error);
-  //                 });
-  //             // return data;
-  //         } catch (error) {
-  //             // throw new Error(error);
-  //             console.error(error);
-  //             return error.response;
-  //         }
-  //     },
-  //     [],
-  // );
-
-  const a = (id) => {
-    console.log(id)
-  }
+  const Swal = require('sweetalert2')
 
 
 
-  const toggleAdmin = React.useCallback(
+  const Delete = React.useCallback(
     (id) => () => {
-      setRows((prevRows) =>
-        prevRows.map((row) =>
-          row.id === id ? { ...row, isAdmin: !row.isAdmin } : row,
-        ),
-      );
+
+      Swal.fire({
+        title: 'Are you sure?',
+        text: "You won't be able to revert this!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, delete it!'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          try {
+            const token = localStorage.getItem('token')
+            const AuthStr = 'Bearer '.concat(token);
+            const headers = { 'Authorization': AuthStr };
+            const apiUrl = `http://localhost:83/SosApp/messenger/admin/deleteRoomChat/${id}`;
+            axios.delete(apiUrl, { headers })
+              .then(response => {
+                Swal.fire(
+                  {
+                    title: 'Deleted',
+                    text: "Your file has been deleted.",
+                    icon: 'warning',
+                    confirmButtonText: 'Ok'
+                  }
+                ).then((result) => {
+                  if (result.isConfirmed) {
+                    window.location.reload();
+                  }
+                })
+              })
+              .catch((error) => {
+                console.log('error ' + error);
+              });
+          } catch (error) {
+            console.error(error);
+            return error.response;
+          }
+
+        }
+      })
     },
     [],
   );
@@ -112,15 +107,6 @@ const Chat = () => {
   const columns = [
 
     { field: 'roomName', headerName: 'Name', width: 200 },
-    // { field: 'roomName', headerName: 'First Name', width: 200 },
-    // { field: 'lastName', headerName: 'Last Name', width: 200 },
-    // { field: 'birthday', headerName: 'Birthday', width: 200, valueFormatter: ({ value }) => moment(value).format('MM/DD/YYYY') },
-    // { field: 'gender', headerName: 'Gender', width: 120, valueFormatter: ({ value }) => value === 'F' ? 'Female' : 'Male' },
-    // {
-    //   field: 'idCard', headerName: 'Verify ID Card', width: 120, valueFormatter: ({ value }) => value?.verify === true ? 'Yes' : 'No',
-
-    // },
-    // { field: 'address', headerName: 'Address', width: 120, valueFormatter: ({ value }) => value?.address },
 
     {
       field: 'actions1',
@@ -128,25 +114,11 @@ const Chat = () => {
       type: 'actions',
       width: 80,
       getActions: (params) => [
-        // console.log(params)
+    
         <DialogsChat data={params.id} />,
-        // <GridActionsCellItem
-        //   icon={<DeleteIcon />}
-        //   label="Delete"
-        //   onClick={a(params.id)}
-        //   showInMenu
-        // />,
-        // <GridActionsCellItem
-        //   icon={<ViewColumnIcon />}
-        //   label="Detail"
-        //   onClick={Detail(params.id)}
-        //   showInMenu
-        // />,
+    
       ],
-      // renderCell: (params) => {
-      // return  <DialogUser props={params} />;
 
-      // }
     },
 
     {
@@ -155,25 +127,26 @@ const Chat = () => {
       type: 'actions',
       width: 80,
       getActions: (params) => [
-        <DialogsMessage data={params.id} />,
-
-        // <GridActionsCellItem
-        //   icon={<DeleteIcon />}
-        //   label="Delete"
-        //   onClick={Delete(params.id)}
-        //   showInMenu
-        // />,
-        // <GridActionsCellItem
-        //   icon={<ViewColumnIcon />}
-        //   label="Detail"
-        //   onClick={Detail(params.id)}
-        //   showInMenu
-        // />,
+        <DialogsMessage data={params} />,
       ],
-      // renderCell: (params) => {
-      // return  <DialogUser props={params} />;
+  
+    },
 
-      // }
+    {
+      field: 'actions3',
+      headerName: 'Action',
+      type: 'actions',
+      width: 80,
+      getActions: (params) => [
+  
+        <GridActionsCellItem
+          icon={<DeleteIcon />}
+          label="Delete"
+          onClick={Delete(params.id)}
+        />,
+
+      ],
+    
     },
 
   ]
@@ -183,27 +156,33 @@ const Chat = () => {
       setLoading(true);
 
       try {
-        const AuthStr = 'Bearer '.concat('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6ImFkbWluIiwiZXhwIjoxNjg2Mzg5MDc0fQ.eEkGAKDc2HbUDWrngr4y19LYkyOnfLc10Ihhbh_KTzg');
+        const token = localStorage.getItem('token')
+        const AuthStr = 'Bearer '.concat(token);
         const apiUrl = 'http://localhost:83/SosApp/messenger/admin/getChatList';
-        const config = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6ImFkbWluIiwiZXhwIjoxNjg2Mzg5MDc0fQ.eEkGAKDc2HbUDWrngr4y19LYkyOnfLc10Ihhbh_KTzg';
+      
         // const { data } = await axios.get(apiUrl, { 'headers': { 'Authorization': AuthStr } });
         await axios.get(apiUrl, { headers: { Authorization: AuthStr } })
           .then(response => {
             // If request is good...
-            console.log(response.data.data);
+      
             setRows(response.data.data);
-            console.log(rows);
+     
             setLoading(false);
 
           })
           .catch((error) => {
-            console.log('error ' + error);
+         
             setLoading(false);
 
           });
         // return data;
       } catch (error) {
-        // throw new Error(error);
+        Swal.fire({
+          title: 'Error!',
+          text: `${error.response.data.message}`,
+          icon: 'error',
+          confirmButtonText: 'Close'
+        })
         console.error(error);
         return error.response;
       } finally {
@@ -214,7 +193,7 @@ const Chat = () => {
 
     fetchData();
   }, []);
-  console.log(rows);
+
   return (
     <>
 

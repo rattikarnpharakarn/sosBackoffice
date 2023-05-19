@@ -75,20 +75,24 @@ BootstrapDialogTitle.propTypes = {
 };
 
 export default function DialogsHotline(props) {
-  console.log(props);
+ 
   const [open, setOpen] = useState(false);
   const [number, setNumber] = useState(props.data?.row?.number);
   const [description, setDescription] = useState(props.data?.row?.description);
+  const Swal = require('sweetalert2')
 
 
   const handleOpen = () => {
     setOpen(true);
+    setNumber('');
+    setDescription('');
+
   };
   const handleClose = () => {
     setOpen(false);
   };
 
-  const onSubmit = () => {
+  const onSubmit = async () => {
     const payload = {
       number: number ? number : number === '' ? '' : props.data?.row?.number,
       description: description ? description : description === '' ? '' : props.data?.row?.description,
@@ -96,15 +100,14 @@ export default function DialogsHotline(props) {
     }
     if (props.data?.id) {
       try {
-        const AuthStr = 'Bearer '.concat('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6ImFkbWluIiwiZXhwIjoxNjg2Mzg5MDc0fQ.eEkGAKDc2HbUDWrngr4y19LYkyOnfLc10Ihhbh_KTzg');
+        const token = localStorage.getItem('token')
+        const AuthStr = 'Bearer '.concat(token);
         const headers = { 'Authorization': AuthStr };
         const apiUrl = `http://localhost:82/SosApp/hotline/admin/${props.data?.id}`;
-        const config = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6ImFkbWluIiwiZXhwIjoxNjg2Mzg5MDc0fQ.eEkGAKDc2HbUDWrngr4y19LYkyOnfLc10Ihhbh_KTzg';
         // const { data } = await axios.get(apiUrl, { 'headers': { 'Authorization': AuthStr } });
         axios.put(apiUrl, payload, { headers })
           .then(response => {
-            // If request is good...
-            console.log(response.data.data);
+       
             window.location.reload();
 
           })
@@ -113,22 +116,26 @@ export default function DialogsHotline(props) {
           });
         // return data;
       } catch (error) {
-        // throw new Error(error);
-        console.error(error);
+        Swal.fire({
+          title: 'Error!',
+          text: `${error.response.data.message}`,
+          icon: 'error',
+          confirmButtonText: 'Close'
+        })
         return error.response;
       }
 
     } else {
       try {
-        const AuthStr = 'Bearer '.concat('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6ImFkbWluIiwiZXhwIjoxNjg2Mzg5MDc0fQ.eEkGAKDc2HbUDWrngr4y19LYkyOnfLc10Ihhbh_KTzg');
+        const token = localStorage.getItem('token')
+        const AuthStr = 'Bearer '.concat(token);
         const headers = { 'Authorization': AuthStr };
         const apiUrl = 'http://localhost:82/SosApp/hotline/admin/';
-        const config = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6ImFkbWluIiwiZXhwIjoxNjg2Mzg5MDc0fQ.eEkGAKDc2HbUDWrngr4y19LYkyOnfLc10Ihhbh_KTzg';
+       
         // const { data } = await axios.get(apiUrl, { 'headers': { 'Authorization': AuthStr } });
-        axios.post(apiUrl, payload, { headers })
+        await axios.post(apiUrl, payload, { headers })
           .then(response => {
-            // If request is good...
-            console.log(response.data.data);
+       
             window.location.reload();
 
           })
@@ -137,8 +144,12 @@ export default function DialogsHotline(props) {
           });
         // return data;
       } catch (error) {
-        // throw new Error(error);
-        console.error(error);
+        Swal.fire({
+          title: 'Error!',
+          text: `${error.response.data.message}`,
+          icon: 'error',
+          confirmButtonText: 'Close'
+        })
         return error.response;
       }
     }

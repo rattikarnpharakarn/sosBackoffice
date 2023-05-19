@@ -23,17 +23,12 @@ import moment from 'moment';
 
 import {
   Button,
-
-  DialogHeader,
-  DialogBody,
-  DialogFooter,
   Input,
-  Textarea,
   Radio,
   Select,
   Option
 } from "@material-tailwind/react";
-import { XMarkIcon } from "@heroicons/react/24/solid";
+import profile from '../../../assets/images/profile.png';
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   '& .MuiDialogContent-root': {
@@ -74,7 +69,7 @@ BootstrapDialogTitle.propTypes = {
 };
 
 const DialogUser = (props) => {
-  console.log(moment(props.data?.row?.birthday).format('MM/DD/YYYY'));
+  const Swal = require('sweetalert2')
   const [open, setOpen] = useState(false);
   const [username, setUsername] = useState(props.data?.row?.phoneNumber);
   const [email, setEmail] = useState(props.data?.row?.email);
@@ -97,10 +92,34 @@ const DialogUser = (props) => {
   const [imgprofile, setImgProfile] = useState(props.data?.row?.imgprofile);
   const [isprofile, setShowProfile] = useState();
 
-  console.log(fname)
-  const handleOpen = () => setOpen(!open);
-  const handleClose = () => setOpen(!open);
 
+  const handleOpen = () => setOpen(!open);
+  const handleClose = () => {
+    setUsername('')
+    setEmail('')
+    setAddress('')
+    setBirthday('')
+    setCfPassword('')
+    setPassword('')
+    setCountry('')
+    setUsername('')
+    setDistrict('')
+    setFname('')
+    setGender('')
+    setLname('')
+    setIdcard('')
+    setImgCard('')
+    setImgProfile('')
+    setSubdistrict('')
+    setProvince('')
+    setPostalCode('')
+    setCountry('')
+    setShowProfile('')
+    setRole('')
+
+
+    setOpen(!open);
+  }
   const options = [
     { value: "1", label: "Admin" },
     { value: "2", label: "User" },
@@ -114,9 +133,22 @@ const DialogUser = (props) => {
 
       let reader = new FileReader();
       reader.readAsDataURL(event.target.files[0]);
+      const type = event.target.files[0].type
+
       reader.onload = function () {
-        setImgProfile(reader.result)
-        console.log(reader.result);
+        //   console.log(reader.result);
+        if (type === 'image/jpeg') {
+          const result = reader.result.replace("data:image/jpeg;base64,", "");
+          setImgProfile(result)
+         
+        } else {
+          const result = reader.result.replace("data:image/png;base64,", "");
+          setImgProfile(result)
+       
+        }
+
+
+
       };
       reader.onerror = function (error) {
         console.log('Error: ', error);
@@ -130,10 +162,18 @@ const DialogUser = (props) => {
     if (event.target.files && event.target.files[0]) {
       let reader = new FileReader();
       reader.readAsDataURL(event.target.files[0]);
-      reader.onload = function () {
-        setImgCard(reader.result)
-        console.log(reader.result);
-      };
+      const type = event.target.files[0].type
+
+      if (type === 'image/jpeg') {
+        const result = reader.result.replace("data:image/jpeg;base64,", "");
+        setImgCard(result)
+      
+      } else {
+        const result = reader.result.replace("data:image/png;base64,", "");
+        setImgCard(result)
+      
+      }
+
       reader.onerror = function (error) {
         console.log('Error: ', error);
       };
@@ -144,16 +184,16 @@ const DialogUser = (props) => {
   const onRole = (e) => {
 
     setRole(e)
-    console.log(e, 'in');
+  
   }
   const onGender = (e) => {
 
     setGender(e)
-    console.log(e, 'in');
+   
   }
 
 
-  const onSubmit = () => {
+  const onSubmit = async () => {
     const payload = {
       phoneNumber: username ? username : username === '' ? '' : props.data?.row?.phoneNumber,
       password: password,
@@ -185,12 +225,13 @@ const DialogUser = (props) => {
     }
     if (props.data?.id) {
       try {
-        const AuthStr = 'Bearer '.concat('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6ImFkbWluIiwiZXhwIjoxNjg2Mzg5MDc0fQ.eEkGAKDc2HbUDWrngr4y19LYkyOnfLc10Ihhbh_KTzg');
+        const token = localStorage.getItem('token');
+        const AuthStr = 'Bearer '.concat(token);
         const headers = { 'Authorization': AuthStr };
         const apiUrl = `http://localhost:80/SosApp/accounts/admin/user/${props.data?.id}`;
-        const config = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6ImFkbWluIiwiZXhwIjoxNjg2Mzg5MDc0fQ.eEkGAKDc2HbUDWrngr4y19LYkyOnfLc10Ihhbh_KTzg';
+
         // const { data } = await axios.get(apiUrl, { 'headers': { 'Authorization': AuthStr } });
-        axios.put(apiUrl, payload, { headers })
+        await axios.put(apiUrl, payload, { headers })
           .then(response => {
             // If request is good...
             console.log(response.data.data);
@@ -202,8 +243,12 @@ const DialogUser = (props) => {
           });
         // return data;
       } catch (error) {
-        // throw new Error(error);
-        console.error(error);
+        Swal.fire({
+          title: 'Error!',
+          text: `${error.response.data.message}`,
+          icon: 'error',
+          confirmButtonText: 'Close'
+        })
         return error.response;
       }
 
@@ -214,7 +259,7 @@ const DialogUser = (props) => {
         const apiUrl = 'http://localhost:80/SosApp/accounts/admin/user';
         const config = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6ImFkbWluIiwiZXhwIjoxNjg2Mzg5MDc0fQ.eEkGAKDc2HbUDWrngr4y19LYkyOnfLc10Ihhbh_KTzg';
         // const { data } = await axios.get(apiUrl, { 'headers': { 'Authorization': AuthStr } });
-        axios.post(apiUrl, payload, { headers })
+        await axios.post(apiUrl, payload, { headers })
           .then(response => {
             // If request is good...
             console.log(response.data.data);
@@ -226,8 +271,12 @@ const DialogUser = (props) => {
           });
         // return data;
       } catch (error) {
-        // throw new Error(error);
-        console.error(error);
+        Swal.fire({
+          title: 'Error!',
+          text: `${error.response.data.message}`,
+          icon: 'error',
+          confirmButtonText: 'Close'
+        })
         return error.response;
       }
     }
@@ -236,7 +285,7 @@ const DialogUser = (props) => {
 
 
 
-console.log(gender)
+  
   return (
     <div className='text-right mb-5'>
       {props.data?.id ?
@@ -268,12 +317,12 @@ console.log(gender)
           >
             <div className="grid gap-6">
               <div className='flex justify-center'>
-                {props.data?.id ?
+                {props.data?.id || isprofile ?
                   <img className='w-28 h-28 p-1 rounded-full ring-2 ring-gray-300 dark:ring-gray-500'
                     src={isprofile} alt="profile photo" />
                   :
                   <img className='w-28 h-28 p-1 rounded-full ring-2 ring-gray-300 dark:ring-gray-500'
-                    src={isprofile} alt="profile photo" />
+                    src={profile} alt="profile photo" />
                 }
 
               </div>
@@ -314,8 +363,8 @@ console.log(gender)
               <div className="flex space-x-4">
                 <Input label="Birth day" value={birthday} type="date" onChange={(e) => setBirthday(e.target.value)} />
                 <span className="p-3">Gender</span>
-                <Radio id="html" name="type" value="M" label="Male" checked={gender === 'M' } onChange={(e) => onGender(e.target.value)}/>
-                <Radio id="react" name="type" value="F" label="Female" checked={gender === 'F'  } onChange={(e) => onGender(e.target.value)} />
+                <Radio id="html" name="type" value="M" label="Male" checked={gender === 'M'} onChange={(e) => onGender(e.target.value)} />
+                <Radio id="react" name="type" value="F" label="Female" checked={gender === 'F'} onChange={(e) => onGender(e.target.value)} />
               </div>
               <div className="flex space-x-4">
                 <Input label="Work place" value={workplace} type="text" onChange={(e) => setWorkplack(e.target.value)} />
@@ -333,20 +382,37 @@ console.log(gender)
                 <Input label="Country" value={country} type="text" onChange={(e) => setCountry(e.target.value)} />
               </div>
               <div>
-                <Select
+                <label>Role</label>
+                <Select value={role}
+                  onChange={(e) => onRole(e)}>
+                  <Option value="1">
+                    admin
+                  </Option>
+                  <Option value="2">
+                    user
+                  </Option>
+                  <Option value="3">
+                    operator
+                  </Option>
+
+                </Select>
+                {/* <Select
                   value={role}
                   onChange={(e) => onRole(e)}
                 >
                   {options?.map((name, i) => (
-                    <Option
-                      key={i}
-                      value={name.value}
-                    >
-                      {name.label}
-                    </Option>
+                    <>
+                      <Option
+                        key={i}
+                        value={name.value}
+                      >
+                        {name.label}
+                      </Option>
+                    </>
+
                   ))}
 
-                </Select>
+                </Select> */}
               </div>
             </div>
           </Box>

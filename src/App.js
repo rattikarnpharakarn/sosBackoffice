@@ -3,7 +3,7 @@ import { useTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import AuthenProvider from './AuthProvider';
 import Sidebar from './shared/sidebar';
-import Login from './pages/login';
+import Swal from 'sweetalert2/dist/sweetalert2.js'
 
 
 

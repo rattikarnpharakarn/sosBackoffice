@@ -17,7 +17,9 @@ import SosIcon from '@mui/icons-material/Sos';
 import Grid from '@mui/material/Grid';
 import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
 import DetailDialogs from '../../shared/Dialog/sos/detail';
-import Loading from '../../shared/Dialog/sos/index'
+import Loading from '../../shared/Dialog/sos/index';
+import { CSVLink } from "react-csv";
+import FileDownloadIcon from '@mui/icons-material/FileDownload';
 
 function RenderDate(props) {
   const { hasFocus, value } = props;
@@ -58,60 +60,62 @@ RenderDate.propTypes = {
   value: PropTypes.instanceOf(Date),
 };
 
-const Sos = () => {
 
+
+
+const Sos = () => {
   const [rows, setRows] = React.useState(initialRows);
   const [loading, setLoading] = useState(false);
+  const Swal = require('sweetalert2')
 
 
-  const deleteUser = React.useCallback(
-    (id) => () => {
-      setTimeout(() => {
-        setRows((prevRows) => prevRows.filter((row) => row.id !== id));
-      });
-    },
-    [],
-  );
-
-  const toggleAdmin = React.useCallback(
-    (id) => () => {
-      setRows((prevRows) =>
-        prevRows.map((row) =>
-          row.id === id ? { ...row, isAdmin: !row.isAdmin } : row,
-        ),
-      );
-    },
-    [],
-  );
 
   const Delete = React.useCallback(
     (id) => () => {
-      try {
-        const AuthStr = 'Bearer '.concat('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6ImFkbWluIiwiZXhwIjoxNjg2Mzg5MDc0fQ.eEkGAKDc2HbUDWrngr4y19LYkyOnfLc10Ihhbh_KTzg');
-        const headers = { 'Authorization': AuthStr };
-        const apiUrl = `http://localhost:81/SosApp/emergency/admin/${id}`;
-        const config = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6ImFkbWluIiwiZXhwIjoxNjg2Mzg5MDc0fQ.eEkGAKDc2HbUDWrngr4y19LYkyOnfLc10Ihhbh_KTzg';
-        // const { data } = await axios.get(apiUrl, { 'headers': { 'Authorization': AuthStr } });
-        axios.delete(apiUrl, { headers })
-          .then(response => {
-            // If request is good...
-            console.log(response.data.data);
-            window.location.reload();
 
-          })
-          .catch((error) => {
-            console.log('error ' + error);
-          });
-        // return data;
-      } catch (error) {
-        // throw new Error(error);
-        console.error(error);
-        return error.response;
-      }
+      Swal.fire({
+        title: 'Are you sure?',
+        text: "You won't be able to revert this!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, delete it!'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          try {
+            const token = localStorage.getItem('token')
+            const AuthStr = 'Bearer '.concat(token);
+            const headers = { 'Authorization': AuthStr };
+            const apiUrl = `http://localhost:81/SosApp/emergency/admin/${id}`;
+            axios.delete(apiUrl, { headers })
+              .then(response => {
+                Swal.fire(
+                  {
+                    title: 'Deleted',
+                    text: "Your file has been deleted.",
+                    icon: 'warning',
+                    confirmButtonText: 'Ok'
+                  }
+                ).then((result) => {
+                  if (result.isConfirmed) {
+                    window.location.reload();
+                  }
+                })
+              })
+              .catch((error) => {
+                console.log('error ' + error);
+              });
+          } catch (error) {
+            console.error(error);
+            return error.response;
+          }
+
+        }
+      })
     },
     [],
   );
-
 
 
   const columns = [
@@ -131,11 +135,6 @@ const Sos = () => {
           label="Edit"
           onClick={Delete(params.id)}
         />,
-        // <GridActionsCellItem
-        //   icon={<RemoveRedEyeIcon />}
-        //   label="Delete"
-        //   onClick={toggleAdmin(params.id)}
-        // />
         <DetailDialogs id={params.id} />,
       ],
     },
@@ -146,28 +145,28 @@ const Sos = () => {
       setLoading(true);
 
       try {
-        const AuthStr = 'Bearer '.concat('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6ImFkbWluIiwiZXhwIjoxNjg2Mzg5MDc0fQ.eEkGAKDc2HbUDWrngr4y19LYkyOnfLc10Ihhbh_KTzg');
+        const token = localStorage.getItem('token');
+        const AuthStr = 'Bearer '.concat(token);
         const apiUrl = 'http://localhost:81/SosApp/emergency/admin/';
-        const config = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6ImFkbWluIiwiZXhwIjoxNjg2Mzg5MDc0fQ.eEkGAKDc2HbUDWrngr4y19LYkyOnfLc10Ihhbh_KTzg';
-        // const { data } = await axios.get(apiUrl, { 'headers': { 'Authorization': AuthStr } });
-        await axios.get(apiUrl, { headers: { Authorization: AuthStr } })
-          .then(response => {
-            // If request is good...
-            console.log(response.data.data);
-            setRows(response.data.data);
-            console.log(rows);
-            setLoading(false);
 
+        const a = await axios.get(apiUrl, { headers: { Authorization: AuthStr } })
+          .then(response => {
+            setRows(response.data.data);
+            setLoading(false);
           })
           .catch((error) => {
-            console.log('error ' + error);
             setLoading(false);
 
           });
+
         // return data;
       } catch (error) {
-        // throw new Error(error);
-        console.error(error);
+        Swal.fire({
+          title: 'Error!',
+          text: `${error.response.data.message}`,
+          icon: 'error',
+          confirmButtonText: 'Close'
+        })
         return error.response;
       } finally {
         setLoading(false);

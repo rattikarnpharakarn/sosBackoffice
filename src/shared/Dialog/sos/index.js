@@ -81,11 +81,15 @@ export default function DialogsSos(props) {
     const [open, setOpen] = useState(false);
     const [nameType, setNameType] = useState(props.data?.row?.nameType);
     const [imageType, setImageType] = useState(props.data?.row?.imageType);
-    const [image, setImage] = useState();
+    const Swal = require('sweetalert2')
+
 
 
     const handleOpen = () => {
         setOpen(true);
+        setNameType('');
+        setImageType('');
+
     };
     const handleClose = () => {
         setOpen(false);
@@ -103,11 +107,11 @@ export default function DialogsSos(props) {
                 if (type === 'image/jpeg') {
                     const result = reader.result.replace("data:image/jpeg;base64,", "");
                     setImageType(result)
-                    console.log(result);
+                  
                 } else {
                     const result = reader.result.replace("data:image/png;base64,", "");
                     setImageType(result)
-                    console.log(result);
+                   
                 }
 
 
@@ -119,9 +123,6 @@ export default function DialogsSos(props) {
 
 
     const onSubmit = () => {
-        // let result = image.replace("data:image/jpeg;base64,", "");
-        // setImageType(result)
-        // console.log(imageType)
         const payload = {
             nameType: nameType ? nameType : nameType === '' ? '' : props.data?.row?.nameType,
             imageType: imageType ? imageType : imageType === '' ? '' : props.data?.row?.imageType,
@@ -147,22 +148,25 @@ export default function DialogsSos(props) {
                     });
                 // return data;
             } catch (error) {
-                // throw new Error(error);
-                console.error(error);
+                Swal.fire({
+                    title: 'Error!',
+                    text: `${error.response.data.message}`,
+                    icon: 'error',
+                    confirmButtonText: 'Close'
+                  })
                 return error.response;
             }
 
         } else {
             try {
-                const AuthStr = 'Bearer '.concat('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6ImFkbWluIiwiZXhwIjoxNjg2Mzg5MDc0fQ.eEkGAKDc2HbUDWrngr4y19LYkyOnfLc10Ihhbh_KTzg');
+                const token = localStorage.getItem('token');
+                const AuthStr = 'Bearer '.concat(token);
                 const headers = { 'Authorization': AuthStr };
                 const apiUrl = 'http://localhost:81/SosApp/emergency/admin/type/';
-                const config = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6ImFkbWluIiwiZXhwIjoxNjg2Mzg5MDc0fQ.eEkGAKDc2HbUDWrngr4y19LYkyOnfLc10Ihhbh_KTzg';
-                // const { data } = await axios.get(apiUrl, { 'headers': { 'Authorization': AuthStr } });
+              
                 axios.post(apiUrl, payload, { headers })
                     .then(response => {
-                        // If request is good...
-                        // console.log(response.data.data);
+                      
                         window.location.reload();
 
                     })
@@ -171,8 +175,12 @@ export default function DialogsSos(props) {
                     });
                 // return data;
             } catch (error) {
-                // throw new Error(error);
-                console.error(error);
+                Swal.fire({
+                    title: 'Error!',
+                    text: `${error.response.data.message}`,
+                    icon: 'error',
+                    confirmButtonText: 'Close'
+                  })
                 return error.response;
             }
         }

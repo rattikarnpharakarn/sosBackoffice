@@ -80,17 +80,19 @@ BootstrapDialogTitle.propTypes = {
 };
 
 export default function DialogsSubtype(props) {
-    // console.log(props?.data?.row?.toString(typeId));
+
     const [open, setOpen] = useState(false);
     const [nameSubType, setNameType] = useState(props?.data?.row?.nameSubType);
     const [imageSubType, setImageType] = useState(props?.data?.row?.imageSubType);
     const [type, setType] = useState(props?.data?.row?.typeId?.toString());
     const [image, setImage] = useState();
     const [rows, setRows] = useState();
+    const Swal = require('sweetalert2')
+
 
     const onType = (e) => {
         setType(e.target.value)
-        console.log(e.target.value, 'in');
+        
     }
 
     const handleOpen = () => {
@@ -98,6 +100,10 @@ export default function DialogsSubtype(props) {
     };
     const handleClose = () => {
         setOpen(false);
+        setImage('')
+        setImageType('')
+        setNameType('')
+        setType('')
     };
 
     const onImageProfile = (event) => {
@@ -109,17 +115,17 @@ export default function DialogsSubtype(props) {
             reader.readAsDataURL(event.target.files[0]);
             reader.onload = function () {
                 //   console.log(reader.result);
-                if(type === 'image/jpeg'){
+                if (type === 'image/jpeg') {
                     const result = reader.result.replace("data:image/jpeg;base64,", "");
                     setImageType(result)
-                    console.log(result);
-                }else{
+                   
+                } else {
                     const result = reader.result.replace("data:image/png;base64,", "");
                     setImageType(result)
-                    console.log(result);
+                 
                 }
-              
-                
+
+
 
             };
             reader.onerror = function (error) {
@@ -130,49 +136,43 @@ export default function DialogsSubtype(props) {
     }
 
 
-    const onSubmit = () => {
-        console.log(type);
-        // let result = image.replace("data:image/jpeg;base64,", "");
-        // setImageType(result)
-        // console.log(imageType)
+    const onSubmit = async () => {
         const payload = {
             nameSubType: nameSubType ? nameSubType : nameSubType === '' ? '' : props?.data?.row?.nameSubType,
             imageSubType: imageSubType ? imageSubType : imageSubType === '' ? '' : props?.data?.row?.imageSubType,
             typeId: type ? type : type === '' ? '' : props?.data?.row?.type,
-
-
         }
 
         if (props?.data?.id) {
             try {
-                const AuthStr = 'Bearer '.concat('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6ImFkbWluIiwiZXhwIjoxNjg2Mzg5MDc0fQ.eEkGAKDc2HbUDWrngr4y19LYkyOnfLc10Ihhbh_KTzg');
+                const token = localStorage.getItem('token');
+                const AuthStr = 'Bearer '.concat(token);
                 const headers = { 'Authorization': AuthStr };
                 const apiUrl = `http://localhost:81/SosApp/emergency/admin/subType/${props?.data?.id}`;
-                const config = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6ImFkbWluIiwiZXhwIjoxNjg2Mzg5MDc0fQ.eEkGAKDc2HbUDWrngr4y19LYkyOnfLc10Ihhbh_KTzg';
-                // const { data } = await axios.get(apiUrl, { 'headers': { 'Authorization': AuthStr } });
-                axios.put(apiUrl, payload, { headers })
+                await axios.put(apiUrl, payload, { headers })
                     .then(response => {
-                        // If request is good...
-                        // console.log(response.data.data);
                         window.location.reload();
-
                     })
                     .catch((error) => {
                         console.log('error ' + error);
                     });
-                // return data;
+
             } catch (error) {
-                // throw new Error(error);
-                console.error(error);
+                Swal.fire({
+                    title: 'Error!',
+                    text: `${error.response.data.message}`,
+                    icon: 'error',
+                    confirmButtonText: 'Close'
+                })
                 return error.response;
             }
 
         } else {
             try {
-                const AuthStr = 'Bearer '.concat('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6ImFkbWluIiwiZXhwIjoxNjg2Mzg5MDc0fQ.eEkGAKDc2HbUDWrngr4y19LYkyOnfLc10Ihhbh_KTzg');
+                const token = localStorage.getItem('token');
+                const AuthStr = 'Bearer '.concat(token);
                 const headers = { 'Authorization': AuthStr };
                 const apiUrl = 'http://localhost:81/SosApp/emergency/admin/subType/';
-                const config = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6ImFkbWluIiwiZXhwIjoxNjg2Mzg5MDc0fQ.eEkGAKDc2HbUDWrngr4y19LYkyOnfLc10Ihhbh_KTzg';
                 // const { data } = await axios.get(apiUrl, { 'headers': { 'Authorization': AuthStr } });
                 axios.post(apiUrl, payload, { headers })
                     .then(response => {
@@ -186,8 +186,12 @@ export default function DialogsSubtype(props) {
                     });
                 // return data;
             } catch (error) {
-                // throw new Error(error);
-                console.error(error);
+                Swal.fire({
+                    title: 'Error!',
+                    text: `${error.response.data.message}`,
+                    icon: 'error',
+                    confirmButtonText: 'Close'
+                })
                 return error.response;
             }
         }
@@ -203,10 +207,10 @@ export default function DialogsSubtype(props) {
                 const data = await axios.get(apiUrl, { headers: { Authorization: AuthStr } })
                     .then(response => {
                         // If request is good...
-                        console.log(response.data.data);
+                  
                         setRows(response.data.data);
 
-                        console.log(data);
+                      
                     })
                     .catch((error) => {
                         console.log('error ' + error);
@@ -221,7 +225,7 @@ export default function DialogsSubtype(props) {
 
         fetchData();
     }, []);
-    console.log(rows?.map((a) => a?.nameType));
+
     return (
         <div className='text-right mb-5'>
             {props?.data?.id ?
@@ -258,16 +262,19 @@ export default function DialogsSubtype(props) {
                             <div className="flex space-x-4" >
                                 <Input label="Image sub type" type="file" onChange={(e) => onImageProfile(e)} />
                             </div>
-                            {props.data?.id && (!imageSubType) ?
-                                <div className="flex justify-center">
-                                    <img src={`data:image/jpeg;base64,${props?.data?.row?.imageSubType}`} className="w-28 h-28 " />
-                                    hhhhhh
-                                </div>
-                                :
+
+                            {imageSubType &&
                                 <div className="flex justify-center">
                                     <img src={`data:image/jpeg;base64,${imageSubType}`} className="w-28 h-28 " />
                                 </div>
                             }
+                            {
+                                props.data?.id && (!imageSubType) && <div className="flex justify-center">
+                                    <img src={`data:image/jpeg;base64,${props?.data?.row?.imageSubType}`} className="w-28 h-28 " />
+
+                                </div>
+                            }
+
                             <div >
                                 <Select
                                     labelId="demo-simple-select-label"

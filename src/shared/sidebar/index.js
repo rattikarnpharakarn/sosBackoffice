@@ -25,7 +25,7 @@ import ChatIcon from '@mui/icons-material/Chat';
 import Collapse from '@mui/material/Collapse';
 import LoginIcon from '@mui/icons-material/Login';
 import Grid from '@mui/material/Grid';
-import Login from '../../pages/login';
+import Login from '../../pages/login/index.tsx';
 import { Button } from '@material-tailwind/react';
 import { useNavigate } from 'react-router-dom';
 
@@ -101,9 +101,9 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 const Sidebar = () => {
   const theme = useTheme();
   const navigate = useNavigate();
-  const [open, setOpen] = useState(false);
-  const [openCollapse, setOpenCollapse] = useState(false);
-  const [openCollapseSos, setopenCollapseSos] = useState(false);
+  const [open, setOpen] = useState(true);
+  const [openCollapse, setOpenCollapse] = useState(true);
+  const [openCollapseSos, setopenCollapseSos] = useState(true);
   const login = localStorage.getItem('token')
 
 
@@ -117,10 +117,15 @@ const Sidebar = () => {
 
   const handleDrawerOpen = () => {
     setOpen(true);
+    setOpenCollapse(!openCollapse);
+    setopenCollapseSos(!openCollapseSos);
   };
 
   const handleDrawerClose = () => {
     setOpen(false);
+    setOpenCollapse(!openCollapse);
+    setopenCollapseSos(!openCollapseSos);
+
   };
 
   const Logout = () => {
@@ -296,8 +301,9 @@ const Sidebar = () => {
                     <CrisisAlertIcon />
                   </a>}
                 </ListItemIcon>
-
-                <ListItemText primary='SOS' sx={{ opacity: open ? 1 : 0 }} />
+      
+                  <ListItemText primary='SOS' sx={{ opacity: open ? 1 : 0 }} />
+             
               </ListItemButton>
             </ListItem>
             <Collapse in={openCollapseSos} timeout="auto" unmountOnExit>
@@ -381,7 +387,7 @@ const Sidebar = () => {
             </Toolbar>
           </AppBar>
           <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
-            <DrawerHeader />
+            <DrawerHeader className='w-full' />
             <Login />
           </Box>
         </>

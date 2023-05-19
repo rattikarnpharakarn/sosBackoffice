@@ -94,27 +94,15 @@ export default function DialogsChat(props) {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const AuthStr = 'Bearer '.concat('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6ImFkbWluIiwiZXhwIjoxNjg2Mzg5MDc0fQ.eEkGAKDc2HbUDWrngr4y19LYkyOnfLc10Ihhbh_KTzg');
+                const token = localStorage.getItem('token');
+                const AuthStr = 'Bearer '.concat(token);
                 const apiUrl = `http://localhost:83/SosApp/messenger/admin/getMembersRoomChat/${Number(props.data)}`;
-                const config = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6ImFkbWluIiwiZXhwIjoxNjg2Mzg5MDc0fQ.eEkGAKDc2HbUDWrngr4y19LYkyOnfLc10Ihhbh_KTzg';
-                // const { data } = await axios.get(apiUrl, { 'headers': { 'Authorization': AuthStr } });
                 const res = await axios.get(apiUrl, { headers: { Authorization: AuthStr } })
-                console.log(res.data.data);
+            
                 setRows(res.data.data)
-                // .then(response => {
-                //     // If request is good...
 
-                //     setRows(response);
-                //     console.log(rows,'rows');
-                //     console.log(props.data,'id');
-                // })
-                // .catch((error) => {
-                //     console.log('error ' + error);
-                // });
-                // return data;
             } catch (error) {
-                // throw new Error(error);
-                console.error(error);
+              
                 return error.response;
             }
         }
@@ -133,7 +121,7 @@ export default function DialogsChat(props) {
                 open={open}
             >
                 <BootstrapDialogTitle id="customized-dialog-title" onClose={handleClose}>
-                    {/* {props.data?.id ? 'Update User' : 'Create User'} */}
+                    <p className=""><span><ThreePIcon /></span>สมาชิก{rows?.roomName}</p>
                 </BootstrapDialogTitle>
                 <DialogContent dividers>
                     <Box
@@ -143,26 +131,50 @@ export default function DialogsChat(props) {
                         }}
                         noValidate
                         autoComplete="off"
+                        className="flex flex-col items-center justify-center w-full min-h-full bg-gray-100 text-gray-800 p-10"
                     >
-                        {props.data === rows?.roomChatID &&
-                            <div className="grid gap-6">
-                                <div className="grid gap-6">
-                                    <p className=""><span><ThreePIcon /></span>{rows.roomName}</p>
-                                    {rows.memberRoomChat.map((item, i) => (
-                                        <p className="ml-2 mb-2" key={i}><span><PersonIcon />{item.userId}</span></p>
-                                    ))}
-                                </div>
+
+                        <div class="flex w-full mt-2 space-x-3 max-w-xs">
+                            <div>
+                                {props.data === rows?.roomChatID &&
+                                    <div className="grid gap-6">
+                                        <div className="grid gap-6">
+
+                                            {rows?.memberRoomChat?.map((item) => (
+                                                <>
+                                                    <div className="flex " key={item.id}>
+
+                                                        <div className="mr-5 ">
+                                                            <PersonIcon />
+
+                                                        </div>
+                                                        <div class="">
+                                                            <p className="text-xl">
+                                                                {item.firstname}
+                                                                {item.lastname}
+                                                            </p>
+                                                        </div>
+                                                    </div>
+
+                                                </>
+
+                                            ))}
+
+                                        </div>
+
+                                    </div>
+
+                                }
+
 
                             </div>
+                        </div>
 
-                        }
 
                     </Box>
                 </DialogContent>
                 <DialogActions>
-                    <Button autoFocus >
-                        Save changes
-                    </Button>
+
                 </DialogActions>
             </BootstrapDialog>
         </div>

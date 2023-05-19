@@ -87,11 +87,15 @@ BootstrapDialogTitle.propTypes = {
 };
 
 export default function DialogDetail(props) {
-    console.log(props);
+  
     const [open, setOpen] = useState(false);
     const [nameType, setNameType] = useState(props.data?.row?.nameType);
     const [imageType, setImageType] = useState(props.data?.row?.imageType);
     const [data, setData] = useState();
+    const [detail, setDetail] = useState(false);
+    const [description, setDescription] = useState();
+
+
 
 
     const handleOpen = () => {
@@ -99,47 +103,35 @@ export default function DialogDetail(props) {
         fetchData()
     };
     const handleClose = () => {
+        setNameType('');
+        setImageType('');
+        setData('');
+        setDetail(false);
+        setDescription('');
+
         setOpen(false);
     };
 
-    const onImageProfile = (event) => {
-        if (event.target.files && event.target.files[0]) {
-            //   setShowProfile(URL.createObjectURL(event.target.files[0]));
-
-            const type = event.target.files[0].type
-            let reader = new FileReader();
-            reader.readAsDataURL(event.target.files[0]);
-            reader.onload = function () {
-                //   console.log(reader.result);
-                if (type === 'image/jpeg') {
-                    const result = reader.result.replace("data:image/jpeg;base64,", "");
-                    setImageType(result)
-                    console.log(result);
-                } else {
-                    const result = reader.result.replace("data:image/png;base64,", "");
-                    setImageType(result)
-                    console.log(result);
-                }
 
 
 
-            };
-        }
-
-    }
-
-    const handleVerify = async () => {
+    const handleVerify = async (verify) => {
         try {
-            const AuthStr = 'Bearer '.concat('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6ImFkbWluIiwiZXhwIjoxNjg2Mzg5MDc0fQ.eEkGAKDc2HbUDWrngr4y19LYkyOnfLc10Ihhbh_KTzg');
+            const payload = {
+                description: description ? description : '',
+                verify: verify
+            }
+            const token = localStorage.getItem('token');
+            const AuthStr = 'Bearer '.concat(token);
             const headers = { 'Authorization': AuthStr };
             const apiUrl = `http://localhost:80/SosApp/accounts/admin/user/verifyIDCard/${props?.id}`;
-            const config = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6ImFkbWluIiwiZXhwIjoxNjg2Mzg5MDc0fQ.eEkGAKDc2HbUDWrngr4y19LYkyOnfLc10Ihhbh_KTzg';
+
             // const { data } = await axios.get(apiUrl, { 'headers': { 'Authorization': AuthStr } });
-            await axios.put(apiUrl, '', { headers })
+            await axios.put(apiUrl, payload, { headers })
                 .then(response => {
                     // If request is good...
                     console.log(response.data.data);
-                    window.location.reload();
+                    // window.location.reload();
 
                 })
                 .catch((error) => {
@@ -163,8 +155,7 @@ export default function DialogDetail(props) {
             // const { data } = await axios.get(apiUrl, { 'headers': { 'Authorization': AuthStr } });
             axios.get(apiUrl, { headers: { Authorization: AuthStr } })
                 .then(response => {
-                    // If request is good...
-                    console.log(response.data.data);
+                
                     setData(response.data.data);
 
                 })
@@ -179,8 +170,12 @@ export default function DialogDetail(props) {
         }
     }
 
-    console.log(data);
-    const image = data?.imageProfile
+   
+    // const image = data?.imageProfile
+    const image = data?.imageProfile.replace("data:image/png;base64,", "");
+    const image2 = data?.idCard?.pathImage.replace("data:image/png;base64,", "");
+
+
     return (
         <div className='text-right mb-5'>
 
@@ -198,90 +193,154 @@ export default function DialogDetail(props) {
                     <Box
                         component="form"
                         sx={{
-                            '& .MuiTextField-root': { m: 1, width: '25ch' },
+                            width: 500
                         }}
                         noValidate
                         autoComplete="off"
                     >
-                        <div>
-                            <p className="text-3xl text-center mb-12">Detail</p>
-                            <Grid container spacing={2} className='mb-10'>
-                                <Grid item xs={3}>
-                                    <img src={`data:image/jpeg;base64,${image}`} />
-                                </Grid>
-                                <Grid item xs={9}>
-                                    <Grid container spacing={2} className='mb-10'>
-                                        <Grid item xs={4}>
-                                            <span className='mr-5'>ชื่อจริง: </span><span className='text-2xl'>{data?.firstName}</span>
-                                        </Grid>
-                                        <Grid item xs={4}>
-                                            <span className='mr-5'>นามสกุล: </span><span className='text-2xl'>{data?.lastName}</span>
-                                        </Grid>
-                                        <Grid item xs={4}>
-                                            <span className='mr-5'>วันเกิด: </span><span className='text-2xl'>{moment(data?.birthday).format('MM/DD/YYYY')}</span>
-                                        </Grid>
-                                    </Grid>
-                                    <Grid container spacing={2} >
-                                        <Grid item xs={4}>
-                                            <span className='mr-5'>เบอร์โทรศัพท์: </span><span className='text-2xl'>{data?.phoneNumber}</span>
-                                        </Grid>
-                                        <Grid item xs={4}>
-                                            <span className='mr-5'>เพศ: </span><span className='text-2xl'>{data?.gender === 'F' ? 'Female' : 'Male'}</span>
-                                        </Grid>
-                                        <Grid item xs={4}>
-                                            <span className='mr-5'>สถานะ: </span><span className='text-2xl'>{data?.userRole.name}</span>
-                                        </Grid>
-                                    </Grid>
 
 
+                        <div class='w-full rounded-lg overflow-hidden mx-auto'>
+                            <div
+                                class="min-w-sm border border-gray-100 bg-purple-100   transition-shadow shadow-xl hover:shadow-xl min-w-max">
+                                <div class="flex items-center p-4">
+                                    <div class="relative flex flex-col items-center w-full">
+                                        <div
+                                            class="h-24 w-24 md rounded-full relative avatar flex items-end justify-end text-purple-600 min-w-max absolute top-0 flex bg-purple-200 text-purple-100 row-start-1 row-end-3 text-purple-650 ring-1 ring-white">
 
-                                </Grid>
+                                            <img class="h-28 w-28 md rounded-full relative" src={`data:image/jpeg;base64,${image}`} alt="" />
 
-                            </Grid>
-                            <hr></hr>
-                            <p className='mt-2 mb-10 text-center text-xl'>Verify ID Card</p>
-                            <div className='w-3/6 m-auto'>
-                                {data?.idCard?.verify === true ?
-                                    <Grid container spacing={2} >
-                                        <Grid item xs={6}>
-                                            <img src={`data:image/jpeg;base64,${data?.idCard?.pathImage}`} />
-                                            <div className='text-center mb-5'>
-                                                <span className='mr-5'>รหัสบัตรประชาชน: </span> <span className='text-xl mb-5'>{data?.idCard?.textIDCard}</span>
-                                            </div>
-                                        </Grid>
-                                        <Grid item xs={4.4}>
-                                            <p className='mt-20 text-3xl text-[#16a34a]'>ยืนยันตัวตนสำเร็จ </p>
-                                        </Grid>
-                                        <Grid item xs={1} >
-                                            <TaskAltIcon className='text-[#16a34a] mt-20 text-4xl ' sx={{ height: 50 }} />
-                                        </Grid>
-                                    </Grid>
-                                    :
-                                    <div >
-                                        <div item xs={6}>
-                                            <img src={`data:image/jpeg;base64,${data?.idCard?.pathImage}`} />
-                                            <div className='text-center mb-5'>
-                                                <span className='mr-5'>รหัสบัตรประชาชน: </span> <span className='text-xl mb-5'>{data?.idCard?.textIDCard}</span>
-                                            </div>
+                                            <div class="absolute"></div>
                                         </div>
-                                        <Grid container spacing={2} >
-                                            <Grid item xs={6}>
-                                                <Button variant="contained" color="success" onClick={handleVerify}>
-                                                    Verify
-                                                </Button>
-                                            </Grid>
-                                            <Grid item xs={6}>
-                                                <Button variant="outlined" color="error">
-                                                    Not verify
-                                                </Button>
-                                            </Grid>
 
-                                        </Grid>
+                                        <div class="flex flex-col space-y-1 justify-center items-center -mt-12 w-full">
+                                            <span class="text-md whitespace-nowrap text-gray-800 font-semibold  mb-20"></span><span class="text-md whitespace-nowrap text-gray-600 mb-10"></span>
+
+                                            <div class="py-2 flex space-x-2">
+                                                <div class="flex justify-center  max-h-max whitespace-nowrap focus:outline-none">
+                                                    <span className='mr-2 text-lg'>ชื่อจริง: </span>
+                                                    <span class="mr-2 text-xl font-bold"> {data?.firstName} </span>
+
+                                                </div>
+                                                <div class="flex justify-center  max-h-max whitespace-nowrap focus:outline-none">
+                                                    <span className='mr-2 text-lg'>นามสกุล: </span>
+                                                    <span className='mr-2 text-xl font-bold'>{data?.lastName}</span>
+                                                </div>
+
+                                            </div>
+                                            <div class="py-2 flex space-x-2">
+                                                <div class="flex justify-center  max-h-max whitespace-nowrap focus:outline-none">
+                                                    <span className='mr-2 text-lg'>ชื่อผู้ใช้: </span>
+                                                    <span class="mr-2 text-xl font-bold"> {data?.phoneNumber} </span>
+
+                                                </div>
+                                                <div class="flex justify-center  max-h-max whitespace-nowrap focus:outline-none">
+                                                    <span className='mr-2 text-lg'>เพศ: </span>
+                                                    <span className='mr-2 text-xl font-bold'>{data?.gender === 'F' ? 'Female' : 'Male'}</span>
+                                                </div>
+
+                                            </div>
+                                            <div class="py-2 flex space-x-2">
+                                                <div class="flex justify-center  max-h-max whitespace-nowrap focus:outline-none">
+                                                    <span className='mr-2 text-lg'>สถานะ: </span>
+                                                    <span class="mr-2 text-xl font-bold"> {data?.userRole.name} </span>
+
+                                                </div>
+                                                <div class="flex justify-center  max-h-max whitespace-nowrap focus:outline-none">
+                                                    <span className='mr-2 text-lg'>วันเกิด: </span>
+                                                    <span className='mr-2 text-xl font-bold'>{moment(data?.birthday).format('MM/DD/YYYY')}</span>
+                                                </div>
+
+                                            </div>
+
+                                        </div>
+
                                     </div>
-                                }
+                                </div>
 
                             </div>
+                            <div class="mt-10 py-10 border-t border-blueGray-200 text-center">
+                                <div class="flex flex-wrap justify-center">
+                                    <div class="w-full lg:w-9/12 px-4">
+                                        {data?.idCard?.verify === true ?
+                                            <>
+                                                <div item xs={6}>
+                                                    <img src={`data:image/jpeg;base64,${image2}`} />
+                                                    {`data:image/jpeg;base64,${image2}`}
+                                                    <div className='text-center mb-5'>
+                                                        <span className='mr-5'>รหัสบัตรประชาชน: </span> <span className='text-xl mb-5'>{data?.idCard?.textIDCard}</span>
+                                                    </div>
+                                                </div>
+                                                <Grid container spacing={2} >
+                                                    <Grid item xs={10}>
+                                                        <p className='mt-5 text-3xl text-[#16a34a]'>ยืนยันตัวตนสำเร็จ </p>
+                                                    </Grid>
+                                                    <Grid item xs={1} >
+                                                        <TaskAltIcon className='text-[#16a34a] mt-5 text-4xl ' sx={{ height: 50 }} />
+                                                    </Grid>
+                                                </Grid>
+                                            </>
+
+                                            :
+                                            <div >
+                                                <div item xs={6}>
+                                                    <img src={`data:image/jpeg;base64,${data?.idCard?.pathImage}`} />
+
+                                                    <div className='text-center mb-5'>
+                                                        <span className='mr-5'>รหัสบัตรประชาชน: </span> <span className='text-xl mb-5'>{data?.idCard?.textIDCard}</span>
+                                                    </div>
+                                                </div>
+                                                {!detail && (data?.idCard?.description === '') ?
+                                                    <>
+                                                        <Grid container spacing={2} className="mb-8">
+                                                            <Grid item xs={6}>
+
+                                                                <Button variant="contained" color="success" onClick={() => handleVerify(true)}>
+                                                                    Verify
+                                                                </Button>
+                                                            </Grid>
+                                                            <Grid item xs={6} >
+                                                                <Button variant="outlined" color="error" onClick={() => setDetail(true)}>
+                                                                    Not verify
+                                                                </Button>
+                                                            </Grid>
+                                                        </Grid>
+                                                    </>
+                                                    :
+                                                    <div className="mt-2">
+                                                        <p className='mt-5 text-3xl text-[#dc2626] text-center'>ยืนยันตัวตนไม่สำเร็จ </p>
+                                                        <p className='mt-5 text-xl text-[#dc2626] text-center'>{data?.idCard?.description} </p>
+
+                                                    </div>
+
+                                                }
+
+                                                {detail && (data?.idCard?.description === '') &&
+                                                    <>
+                                                        <TextField
+                                                            id="outlined-multiline-static"
+                                                            label="Multiline"
+                                                            multiline
+                                                            rows={5}
+                                                            variant="outlined"
+                                                            onChange={(e) => setDescription(e.target.value)}
+
+                                                        />
+                                                        <div className="mt-2">
+                                                            <Button variant="outlined" color="error" onClick={() => handleVerify(false)}>
+                                                                Submit
+                                                            </Button>
+                                                        </div>
+
+                                                    </>
+                                                }
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
                         </div>
+
 
                     </Box>
                 </DialogContent>
@@ -292,5 +351,6 @@ export default function DialogDetail(props) {
                 </DialogActions>
             </BootstrapDialog>
         </div>
+
     );
 }
