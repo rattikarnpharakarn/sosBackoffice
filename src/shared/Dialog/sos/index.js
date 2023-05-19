@@ -95,7 +95,7 @@ export default function DialogsSos(props) {
         setOpen(false);
     };
 
-    const onImageProfile = (event) => {
+    const onImageType = (event) => {
         if (event.target.files && event.target.files[0]) {
             //   setShowProfile(URL.createObjectURL(event.target.files[0]));
 
@@ -220,18 +220,21 @@ export default function DialogsSos(props) {
                                 <Input label="Type name" value={nameType} onChange={(e) => setNameType(e.target.value)} />
                             </div>
                             <div className="flex space-x-4" >
-                                <Input label="Image type" type="file" onChange={(e) => onImageProfile(e)} />
+                                <Input label="Image type" type="file" onChange={(e) => onImageType(e)} />
                             </div>
                             <div>
-                                {props.data?.id && (!imageType) ?
-                                    <div className="flex justify-center">
-                                        <img src={`data:image/jpeg;base64,${props?.data?.row?.imageType}`} className="w-28 h-28 " />
-                                    </div>
-                                    :
-                                    <div className="flex justify-center">
-                                        <img src={`data:image/jpeg;base64,${imageType}`} className="w-28 h-28 " />
-                                    </div>
-                                }
+                            {imageType &&
+                                <div className="flex justify-center">
+                                    <img src={`data:image/jpeg;base64,${imageType}`} className="w-28 h-28 " />
+                                </div>
+                            }
+                            {
+                                props.data?.id && (!imageType) && <div className="flex justify-center">
+                                    <img src={`data:image/jpeg;base64,${props?.data?.row?.imageType}`} className="w-28 h-28 " />
+
+                                </div>
+                            }
+                               
                             </div>
                         </div>
 
