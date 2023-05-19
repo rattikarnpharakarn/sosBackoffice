@@ -80,7 +80,7 @@ const RoleManagement = () => {
                         const token = localStorage.getItem('token')
                         const AuthStr = 'Bearer '.concat(token);
                         const headers = { 'Authorization': AuthStr };
-                        const apiUrl = `http://localhost:80/SosApp/accounts/admin/role/${id}`;
+                        const apiUrl = `http://35.229.220.89:80/SosApp/accounts/admin/role/${id}`;
                         axios.delete(apiUrl, { headers })
                             .then(response => {
                                 Swal.fire(
@@ -135,7 +135,7 @@ const RoleManagement = () => {
             try {
                 const token = localStorage.getItem('token')
                 const AuthStr = 'Bearer '.concat(token);
-                const apiUrl = 'http://localhost:80/SosApp/accounts/admin/role';
+                const apiUrl = 'http://35.229.220.89:80/SosApp/accounts/admin/role';
                 await axios.get(apiUrl, { headers: { Authorization: AuthStr } })
                     .then(response => {
               

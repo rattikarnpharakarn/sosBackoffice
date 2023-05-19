@@ -132,7 +132,7 @@ export default function DetailDialogs(props) {
         try {
             const token = localStorage.getItem('token');
             const AuthStr = 'Bearer '.concat(token);
-            const apiUrl = `http://localhost:81/SosApp/emergency/admin/${props.id}`;
+            const apiUrl = `http://35.229.220.89:81/SosApp/emergency/admin/${props.id}`;
             // const { data } = await axios.get(apiUrl, { 'headers': { 'Authorization': AuthStr } });
             await axios.get(apiUrl, { headers: { Authorization: AuthStr } })
                 .then(response => {

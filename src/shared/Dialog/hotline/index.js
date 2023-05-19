@@ -107,7 +107,7 @@ export default function DialogsHotline(props) {
         const token = localStorage.getItem('token')
         const AuthStr = 'Bearer '.concat(token);
         const headers = { 'Authorization': AuthStr };
-        const apiUrl = `http://localhost:82/SosApp/hotline/admin/${props.data?.id}`;
+        const apiUrl = `http://35.229.220.89:82/SosApp/hotline/admin/${props.data?.id}`;
         // const { data } = await axios.get(apiUrl, { 'headers': { 'Authorization': AuthStr } });
         axios.put(apiUrl, payload, { headers })
           .then(response => {
@@ -134,7 +134,7 @@ export default function DialogsHotline(props) {
         const token = localStorage.getItem('token')
         const AuthStr = 'Bearer '.concat(token);
         const headers = { 'Authorization': AuthStr };
-        const apiUrl = 'http://localhost:82/SosApp/hotline/admin/';
+        const apiUrl = 'http://35.229.220.89:82/SosApp/hotline/admin/';
 
         // const { data } = await axios.get(apiUrl, { 'headers': { 'Authorization': AuthStr } });
         await axios.post(apiUrl, payload, { headers })

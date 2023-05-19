@@ -230,16 +230,17 @@ const Sidebar = () => {
                     }}
                   >
                     {
-                      <a href="/user">
+                      <a href="/">
                         <SupervisedUserCircleIcon />
                       </a>
                     }
                   </ListItemIcon>
-
-                  <ListItemText
-                    primary="Users"
-                    sx={{ opacity: open ? 1 : 0 }}
-                  />
+                  <a href="/">
+                    <ListItemText
+                      primary="Users"
+                      sx={{ opacity: open ? 1 : 0 }}
+                    />
+                  </a>
                 </ListItemButton>
               </ListItem>
               <Collapse in={openCollapse} timeout="auto" unmountOnExit>
@@ -247,7 +248,7 @@ const Sidebar = () => {
                   <ListItem disablePadding sx={{ display: "block" }}>
                     <ListItemIcon></ListItemIcon>
                     <ListItemText inset>
-                      {<a href="/user">UserManagement</a>}
+                      {<a href="/">UserManagement</a>}
                     </ListItemText>
                   </ListItem>
                 </List>
@@ -285,10 +286,15 @@ const Sidebar = () => {
                     </a>
                   }
                 </ListItemIcon>
-                <ListItemText
-                  primary="Hotline"
-                  sx={{ opacity: open ? 1 : 0 }}
-                />
+
+                <a href="/hotline">
+                  <ListItemText
+                    primary="Hotline"
+                    sx={{ opacity: open ? 1 : 0 }}
+                  />
+                </a>
+
+
               </ListItemButton>
             </ListItem>
 
@@ -317,8 +323,9 @@ const Sidebar = () => {
                     </a>
                   }
                 </ListItemIcon>
-
-                <ListItemText primary="SOS" sx={{ opacity: open ? 1 : 0 }} />
+                <a href="/sos">
+                  <ListItemText primary="SOS" sx={{ opacity: open ? 1 : 0 }} />
+                </a>
               </ListItemButton>
             </ListItem>
             <Collapse in={openCollapseSos} timeout="auto" unmountOnExit>
@@ -363,8 +370,9 @@ const Sidebar = () => {
                     </a>
                   }
                 </ListItemIcon>
-
-                <ListItemText primary="Chat" sx={{ opacity: open ? 1 : 0 }} />
+                <a href="/chat">
+                  <ListItemText primary="Chat" sx={{ opacity: open ? 1 : 0 }} />
+                </a>
               </ListItemButton>
             </ListItem>
           </Drawer>
@@ -375,7 +383,7 @@ const Sidebar = () => {
         </>
       ) : (
         <>
-          <AppBar position="fixed" open={false}  style={{ background: 'white' ,height:'100%' }}>
+          <AppBar position="fixed" open={false} style={{ background: 'white', height: '100%' }}>
             <Toolbar className="bg-black">
               <IconButton
                 color="inherit"
@@ -396,7 +404,7 @@ const Sidebar = () => {
                   </Typography>
                 </Grid>
                 <Grid item xs={6}>
-          
+
                 </Grid>
               </Grid>
             </Toolbar>

@@ -17,8 +17,7 @@ import axios from 'axios';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as Yup from 'yup';
 import { useForm } from 'react-hook-form';
-import Swal from 'sweetalert2'
-
+import swal from '@sweetalert/with-react';
 
 function Copyright(props) {
   return (
@@ -47,7 +46,9 @@ export default function Login() {
   const [password, setPassword] = React.useState('');
   const [errorusername, setErrorU] = useState(false);
   const [errorpassword, setErrorP] = useState(false);
-  const Swal = require('sweetalert2')
+
+
+
 
   const validationSchema = Yup.object().shape({
     username: Yup.string()
@@ -69,7 +70,7 @@ export default function Login() {
 
 
   const onSubmit = async () => {
-   
+
     const payload = {
       username: username,
       password: password
@@ -77,17 +78,24 @@ export default function Login() {
 
 
     try {
-      const apiUrl = 'http://localhost:80/SosApp/accounts/signIn';
+      const apiUrl = 'http://35.229.220.89:80/SosApp/accounts/signIn';
       const res = await axios.post(apiUrl, payload)
-      navigate('/')
       localStorage.setItem('token', res.data.token)
+      console.log(res);
+      navigate('/')
     } catch (error) {
-      Swal.fire({
-        title: 'Error!',
-        text: `${error.response.data.message}`,
-        icon: 'error',
-        confirmButtonText: 'Close'
-      })
+      console.log(error, 'aaaa');
+
+      swal(
+
+        {
+          title: 'Error',
+          text: `${error?.response?.data?.message}`,
+          icon: 'error',
+          confirmButtonText: 'Ok'
+        }
+
+      )
       return error.response;
     }
   };

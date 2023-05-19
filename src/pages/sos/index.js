@@ -87,7 +87,7 @@ const Sos = () => {
             const token = localStorage.getItem('token')
             const AuthStr = 'Bearer '.concat(token);
             const headers = { 'Authorization': AuthStr };
-            const apiUrl = `http://localhost:81/SosApp/emergency/admin/${id}`;
+            const apiUrl = `http://35.229.220.89:81/SosApp/emergency/admin/${id}`;
             axios.delete(apiUrl, { headers })
               .then(response => {
                 Swal.fire(
@@ -147,7 +147,7 @@ const Sos = () => {
       try {
         const token = localStorage.getItem('token');
         const AuthStr = 'Bearer '.concat(token);
-        const apiUrl = 'http://localhost:81/SosApp/emergency/admin/';
+        const apiUrl = 'http://35.229.220.89:81/SosApp/emergency/admin/';
 
         const a = await axios.get(apiUrl, { headers: { Authorization: AuthStr } })
           .then(response => {
@@ -188,7 +188,7 @@ const Sos = () => {
               <Grid item xs={6}>
                 <p className='text-xl'>
                   <span>
-                    <SosIcon className='mr-5 w-72' />
+                    <p className='text-xl'><span><SosIcon className='mr-5 w-72' /></span>Management</p>
                   </span>
                 </p>
               </Grid>
@@ -209,7 +209,7 @@ const Sos = () => {
             <Grid item xs={6}>
               <p className='text-xl'>
                 <span>
-                  <SosIcon className='mr-5 w-72' />
+                <p className='text-xl'><span><SosIcon className='mr-5 w-72' /></span>Management</p>
                 </span>
               </p>
             </Grid>
@@ -219,7 +219,7 @@ const Sos = () => {
           </Grid>
 
           <div style={{ height: 400, width: 'auto' }}>
-            <DataGrid rows={rows} columns={columns} />
+            <DataGrid rows={rows ?? ''} columns={columns} />
           </div>
         </>
 

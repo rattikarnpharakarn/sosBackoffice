@@ -79,8 +79,8 @@ BootstrapDialogTitle.propTypes = {
 export default function DialogsChat(props) {
 
     const [open, setOpen] = useState(false);
-    const [number, setNumber] = useState(props.data?.row?.number);
-    const [description, setDescription] = useState(props.data?.row?.description);
+    const [number, setNumber] = useState(props?.data?.row?.number);
+    const [description, setDescription] = useState(props?.data?.row?.description);
     const [rows, setRows] = useState();
 
 
@@ -96,7 +96,7 @@ export default function DialogsChat(props) {
             try {
                 const token = localStorage.getItem('token');
                 const AuthStr = 'Bearer '.concat(token);
-                const apiUrl = `http://localhost:83/SosApp/messenger/admin/getMembersRoomChat/${Number(props.data)}`;
+                const apiUrl = `http://35.229.220.89:83/SosApp/messenger/admin/getMembersRoomChat/${Number(props?.data)}`;
                 const res = await axios.get(apiUrl, { headers: { Authorization: AuthStr } })
             
                 setRows(res.data.data)
@@ -136,7 +136,7 @@ export default function DialogsChat(props) {
 
                         <div class="flex w-full mt-2 space-x-3 max-w-xs">
                             <div>
-                                {props.data === rows?.roomChatID &&
+                                {props?.data === rows?.roomChatID &&
                                     <div className="grid gap-6">
                                         <div className="grid gap-6">
 

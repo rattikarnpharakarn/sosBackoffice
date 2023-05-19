@@ -102,7 +102,7 @@ export default function DialogDetail(props) {
             const token = localStorage.getItem('token');
             const AuthStr = 'Bearer '.concat(token);
             const headers = { 'Authorization': AuthStr };
-            const apiUrl = `http://localhost:80/SosApp/accounts/admin/user/verifyIDCard/${props?.id}`;
+            const apiUrl = `http://35.229.220.89:80/SosApp/accounts/admin/user/verifyIDCard/${props?.id}`;
             await axios.put(apiUrl, payload, { headers })
                 .then(response => {
                     window.location.reload();
@@ -124,7 +124,7 @@ export default function DialogDetail(props) {
         try {
             const token = localStorage.getItem('token')
             const AuthStr = 'Bearer '.concat(token);
-            const apiUrl = `http://localhost:80/SosApp/accounts/admin/user/${props.id}`;
+            const apiUrl = `http://35.229.220.89:80/SosApp/accounts/admin/user/${props.id}`;
             const config = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6ImFkbWluIiwiZXhwIjoxNjg2Mzg5MDc0fQ.eEkGAKDc2HbUDWrngr4y19LYkyOnfLc10Ihhbh_KTzg';
 
             axios.get(apiUrl, { headers: { Authorization: AuthStr } })

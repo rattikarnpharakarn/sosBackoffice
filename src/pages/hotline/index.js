@@ -77,7 +77,7 @@ const Hotline = () => {
             const token = localStorage.getItem('token')
             const AuthStr = 'Bearer '.concat(token);
             const headers = { 'Authorization': AuthStr };
-            const apiUrl = `http://localhost:82/SosApp/hotline/admin/${id}`;
+            const apiUrl = `http://35.229.220.89:82/SosApp/hotline/admin/${id}`;
             axios.delete(apiUrl, { headers })
               .then(response => {
                 Swal.fire(
@@ -137,7 +137,7 @@ const Hotline = () => {
       try {
         const token = localStorage.getItem('token')
         const AuthStr = 'Bearer '.concat(token);
-        const apiUrl = 'http://localhost:82/SosApp/hotline/';
+        const apiUrl = 'http://35.229.220.89:82/SosApp/hotline/';
 
         // const { data } = await axios.get(apiUrl, { 'headers': { 'Authorization': AuthStr } });
         await axios.get(apiUrl, { headers: { Authorization: AuthStr } })
@@ -180,7 +180,7 @@ const Hotline = () => {
           <div className='opacity-20'>
             <Grid container spacing={2}>
               <Grid item xs={6}>
-                <p className='text-xl'><span><ContactPhoneIcon className='mr-5 w-72' /></span>Hotline</p>
+                <p className='text-xl'><span><ContactPhoneIcon className='mr-5 w-72' /></span>Hotline Management</p>
               </Grid>
               <Grid item xs={6}>
                 <DialogsHotline />
@@ -195,7 +195,7 @@ const Hotline = () => {
         <>
           <Grid container spacing={2}>
             <Grid item xs={6}>
-              <p className='text-xl'><span><ContactPhoneIcon className='mr-5 w-72' /></span>Hotline</p>
+              <p className='text-xl'><span><ContactPhoneIcon className='mr-5 w-72' /></span>Hotline Management</p>
             </Grid>
             <Grid item xs={6}>
               <DialogsHotline />

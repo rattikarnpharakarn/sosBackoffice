@@ -82,8 +82,8 @@ BootstrapDialogTitle.propTypes = {
 export default function DialogsMessage(props) {
 
     const [open, setOpen] = useState(false);
-    const [number, setNumber] = useState(props.data?.row?.number);
-    const [description, setDescription] = useState(props.data?.row?.description);
+    const [number, setNumber] = useState(props?.data?.row?.number);
+    const [description, setDescription] = useState(props?.data?.row?.description);
     const [rows, setRows] = useState();
     const [name, setName] = useState();
 
@@ -106,7 +106,7 @@ export default function DialogsMessage(props) {
             try {
                 const token = localStorage.getItem('token');
                 const AuthStr = 'Bearer '.concat(token);
-                const apiUrl = `http://localhost:83/SosApp/messenger/admin/chat/message/${Number(props.data?.row?.roomChatID)}`;
+                const apiUrl = `http://35.229.220.89:83/SosApp/messenger/admin/chat/message/${Number(props?.data?.row?.roomChatID)}`;
                 const res = await axios.get(apiUrl, { headers: { Authorization: AuthStr } })
 
                 setRows(res.data.data)
@@ -133,7 +133,7 @@ export default function DialogsMessage(props) {
                 open={open}
             >
                 <BootstrapDialogTitle id="customized-dialog-title" onClose={handleClose}>
-                    <p className=""><span><ThreePIcon /></span>สมาชิก{props.data?.row?.roomName}</p>
+                    <p className=""><span><ThreePIcon /></span>สมาชิก{props?.data?.row?.roomName}</p>
 
                 </BootstrapDialogTitle>
                 <DialogContent dividers>
@@ -153,7 +153,7 @@ export default function DialogsMessage(props) {
                                 {rows?.map((item) => (
 
                                     <>
-                                        {Number(props.data?.row?.roomChatID) === item.roomChatID ?
+                                        {Number(props?.data?.row?.roomChatID) === item.roomChatID ?
 
                                             <>
                                                 <p>user: {item.senderUsername}</p>

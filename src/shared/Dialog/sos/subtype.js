@@ -151,7 +151,7 @@ export default function DialogsSubtype(props) {
                 const token = localStorage.getItem('token');
                 const AuthStr = 'Bearer '.concat(token);
                 const headers = { 'Authorization': AuthStr };
-                const apiUrl = `http://localhost:81/SosApp/emergency/admin/subType/${props?.data?.id}`;
+                const apiUrl = `http://35.229.220.89:81/SosApp/emergency/admin/subType/${props?.data?.id}`;
                 await axios.put(apiUrl, payload, { headers })
                     .then(response => {
                         window.location.reload();
@@ -175,7 +175,7 @@ export default function DialogsSubtype(props) {
                 const token = localStorage.getItem('token');
                 const AuthStr = 'Bearer '.concat(token);
                 const headers = { 'Authorization': AuthStr };
-                const apiUrl = 'http://localhost:81/SosApp/emergency/admin/subType/';
+                const apiUrl = 'http://35.229.220.89:81/SosApp/emergency/admin/subType/';
                 // const { data } = await axios.get(apiUrl, { 'headers': { 'Authorization': AuthStr } });
                 axios.post(apiUrl, payload, { headers })
                     .then(response => {
@@ -204,7 +204,7 @@ export default function DialogsSubtype(props) {
         const fetchData = async () => {
             try {
                 const AuthStr = 'Bearer '.concat('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6ImFkbWluIiwiZXhwIjoxNjg2Mzg5MDc0fQ.eEkGAKDc2HbUDWrngr4y19LYkyOnfLc10Ihhbh_KTzg');
-                const apiUrl = 'http://localhost:81/SosApp/emergency/type';
+                const apiUrl = 'http://35.229.220.89:81/SosApp/emergency/type';
                 const config = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6ImFkbWluIiwiZXhwIjoxNjg2Mzg5MDc0fQ.eEkGAKDc2HbUDWrngr4y19LYkyOnfLc10Ihhbh_KTzg';
                 // const { data } = await axios.get(apiUrl, { 'headers': { 'Authorization': AuthStr } });
                 const data = await axios.get(apiUrl, { headers: { Authorization: AuthStr } })

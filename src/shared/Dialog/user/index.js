@@ -239,7 +239,7 @@ const DialogUser = (props) => {
         const token = localStorage.getItem('token');
         const AuthStr = 'Bearer '.concat(token);
         const headers = { 'Authorization': AuthStr };
-        const apiUrl = `http://localhost:80/SosApp/accounts/admin/user/${props.data?.id}`;
+        const apiUrl = `http://35.229.220.89:80/SosApp/accounts/admin/user/${props.data?.id}`;
 
         // const { data } = await axios.get(apiUrl, { 'headers': { 'Authorization': AuthStr } });
         await axios.put(apiUrl, payload, { headers })
@@ -268,7 +268,7 @@ const DialogUser = (props) => {
         const token = localStorage.getItem('token');
         const AuthStr = 'Bearer '.concat(token);
         const headers = { 'Authorization': AuthStr };
-        const apiUrl = 'http://localhost:80/SosApp/accounts/admin/user';
+        const apiUrl = 'http://35.229.220.89:80/SosApp/accounts/admin/user';
 
         await axios.post(apiUrl, payload, { headers })
           .then(response => {
@@ -341,7 +341,7 @@ const DialogUser = (props) => {
                   <div className="flex justify-center">
                     <img className='w-28 h-28 p-1 rounded-full ring-2 ring-gray-300 dark:ring-gray-500'
                       src={isprofile} alt="profile photo" />
-                   
+
                   </div>
                 }
 
@@ -350,7 +350,7 @@ const DialogUser = (props) => {
                   <div className="flex justify-center">
                     <img className='w-28 h-28 p-1 rounded-full ring-2 ring-gray-300 dark:ring-gray-500'
                       src={profile} alt="profile photo" />
-                   
+
                   </div>
                 }
 
@@ -359,7 +359,7 @@ const DialogUser = (props) => {
                   <div className="flex justify-center">
                     <img className='w-28 h-28 p-1 rounded-full ring-2 ring-gray-300 dark:ring-gray-500'
                       src={profile} alt="profile photo" />
-                   
+
                   </div>
                 }
                 {
@@ -367,7 +367,7 @@ const DialogUser = (props) => {
                   <div className="flex justify-center">
                     <img className='w-28 h-28 p-1 rounded-full ring-2 ring-gray-300 dark:ring-gray-500'
                       src={`data:image/jpeg;base64,${props.data?.row?.imageProfile}`} alt="profile photo" />
-                  
+
                   </div>
                 }
                 {
@@ -375,7 +375,7 @@ const DialogUser = (props) => {
                   <div className="flex justify-center">
                     <img className='w-28 h-28 p-1 rounded-full ring-2 ring-gray-300 dark:ring-gray-500'
                       src={isprofile} alt="profile photo" />
-                   
+
                   </div>
                 }
 
@@ -436,22 +436,23 @@ const DialogUser = (props) => {
                 <Input label="Postalcode" value={postalcode} type="number" onChange={(e) => setPostalCode(e.target.value)} />
                 <Input label="Country" value={country} type="text" onChange={(e) => setCountry(e.target.value)} />
               </div>
-              <div>
-                <label>Role</label>
-                <Select value={role}
-                  onChange={(e) => onRole(e)}>
-                  <Option value="1">
-                    admin
-                  </Option>
-                  <Option value="2">
-                    user
-                  </Option>
-                  <Option value="3">
-                    operator
-                  </Option>
+              {!props.data?.id &&
+                <div>
+                  <label>Role</label>
+                  <Select value={role}
+                    onChange={(e) => onRole(e)}>
+                    <Option value="1">
+                      admin
+                    </Option>
+                    <Option value="2">
+                      user
+                    </Option>
+                    <Option value="3">
+                      operator
+                    </Option>
 
-                </Select>
-                {/* <Select
+                  </Select>
+                  {/* <Select
                   value={role}
                   onChange={(e) => onRole(e)}
                 >
@@ -468,7 +469,8 @@ const DialogUser = (props) => {
                   ))}
 
                 </Select> */}
-              </div>
+                </div>
+              }
             </div>
           </Box>
         </DialogContent>

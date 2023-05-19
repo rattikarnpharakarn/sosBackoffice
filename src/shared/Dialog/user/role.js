@@ -100,7 +100,7 @@ export default function DialogsRole(props) {
         const token = localStorage.getItem('token');
         const AuthStr = 'Bearer '.concat(token);
         const headers = { 'Authorization': AuthStr };
-        const apiUrl = `http://localhost:80/SosApp/accounts/admin/role/${props.data?.id}`;
+        const apiUrl = `http://35.229.220.89:80/SosApp/accounts/admin/role/${props.data?.id}`;
 
         await axios.put(apiUrl, payload, { headers })
           .then(response => {
@@ -125,7 +125,7 @@ export default function DialogsRole(props) {
         const token = localStorage.getItem('token');
         const AuthStr = 'Bearer '.concat(token);
         const headers = { 'Authorization': AuthStr };
-        const apiUrl = 'http://localhost:80/SosApp/accounts/admin/role';
+        const apiUrl = 'http://35.229.220.89:80/SosApp/accounts/admin/role';
 
         await axios.post(apiUrl, payload, { headers })
           .then(response => {

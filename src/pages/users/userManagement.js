@@ -76,7 +76,7 @@ const UserManagement = () => {
             const token = localStorage.getItem('token')
             const AuthStr = 'Bearer '.concat(token);
             const headers = { 'Authorization': AuthStr };
-            const apiUrl = `http://localhost:80/SosApp/accounts/admin/user/${id}`;
+            const apiUrl = `http://35.229.220.89:80/SosApp/accounts/admin/user/${id}`;
             axios.delete(apiUrl, { headers })
               .then(response => {
                 Swal.fire(
@@ -151,7 +151,7 @@ const UserManagement = () => {
       try {
         const token = localStorage.getItem('token')
         const AuthStr = 'Bearer '.concat(token);
-        const apiUrl = 'http://localhost:80/SosApp/accounts/admin/user';
+        const apiUrl = 'http://35.229.220.89:80/SosApp/accounts/admin/user';
 
         await axios.get(apiUrl, { headers: { Authorization: AuthStr } })
           .then(response => {

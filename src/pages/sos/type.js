@@ -79,7 +79,7 @@ const Type = () => {
                         const token = localStorage.getItem('token')
                         const AuthStr = 'Bearer '.concat(token);
                         const headers = { 'Authorization': AuthStr };
-                        const apiUrl = `http://localhost:81/SosApp/emergency/admin/type/${id}`;
+                        const apiUrl = `http://35.229.220.89:81/SosApp/emergency/admin/type/${id}`;
                         axios.delete(apiUrl, { headers })
                             .then(response => {
                                 Swal.fire(
@@ -149,7 +149,7 @@ const Type = () => {
             try {
                 const token = localStorage.getItem('token')
                 const AuthStr = 'Bearer '.concat(token);
-                const apiUrl = 'http://localhost:81/SosApp/emergency/type';
+                const apiUrl = 'http://35.229.220.89:81/SosApp/emergency/type';
 
                 await axios.get(apiUrl, { headers: { Authorization: AuthStr } })
                     .then(response => {
@@ -192,7 +192,7 @@ const Type = () => {
                     <div className='opacity-20'>
                         <Grid container spacing={2}>
                             <Grid item xs={6}>
-                                <p className='text-xl'><span><SosIcon className='mr-5' /></span></p>
+                                <p className='text-xl'><span><SosIcon className='mr-5' />Type Management</span></p>
                             </Grid>
                             <Grid item xs={6}>
                                 <DialogsSos />

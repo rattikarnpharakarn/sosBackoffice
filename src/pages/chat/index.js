@@ -49,7 +49,7 @@ RenderDate.propTypes = {
 };
 
 const Chat = () => {
-  const [rows, setRows] = React.useState(initialRows);
+  const [rows, setRows] = React.useState(initialRows ? initialRows : '');
   const [loading, setLoading] = useState(false);
   const Swal = require('sweetalert2')
 
@@ -72,7 +72,7 @@ const Chat = () => {
             const token = localStorage.getItem('token')
             const AuthStr = 'Bearer '.concat(token);
             const headers = { 'Authorization': AuthStr };
-            const apiUrl = `http://localhost:83/SosApp/messenger/admin/deleteRoomChat/${id}`;
+            const apiUrl = `http://35.229.220.89:83/SosApp/messenger/admin/deleteRoomChat/${id}`;
             axios.delete(apiUrl, { headers })
               .then(response => {
                 Swal.fire(
@@ -115,7 +115,7 @@ const Chat = () => {
       width: 80,
       getActions: (params) => [
     
-        <DialogsChat data={params.id} />,
+        <DialogsChat data={params?.id} />,
     
       ],
 
@@ -142,7 +142,7 @@ const Chat = () => {
         <GridActionsCellItem
           icon={<DeleteIcon />}
           label="Delete"
-          onClick={Delete(params.id)}
+          onClick={Delete(params?.id)}
         />,
 
       ],
@@ -158,14 +158,14 @@ const Chat = () => {
       try {
         const token = localStorage.getItem('token')
         const AuthStr = 'Bearer '.concat(token);
-        const apiUrl = 'http://localhost:83/SosApp/messenger/admin/getChatList';
+        const apiUrl = 'http://35.229.220.89:83/SosApp/messenger/admin/getChatList';
       
         // const { data } = await axios.get(apiUrl, { 'headers': { 'Authorization': AuthStr } });
         await axios.get(apiUrl, { headers: { Authorization: AuthStr } })
           .then(response => {
             // If request is good...
       
-            setRows(response.data.data);
+            setRows(response?.data?.data);
      
             setLoading(false);
 
@@ -203,14 +203,14 @@ const Chat = () => {
           <div className='opacity-20'>
             <Grid container spacing={2}>
               <Grid item xs={6}>
-                <p className='text-xl  mb-5'><span><ChatIcon className='mr-5 w-72' /></span>Chat</p>
+                <p className='text-xl  mb-5'><span><ChatIcon className='mr-5 w-72' /></span>Chat Management</p>
               </Grid>
               <Grid item xs={6}>
                 {/* <DialogsHotline /> */}
               </Grid>
             </Grid>
             <div style={{ height: 400, width: 'auto' }}>
-              <DataGrid rows={rows} columns={columns} getRowId={(row) => row.roomChatID} />
+              <DataGrid rows={rows ?? ''} columns={columns} getRowId={(row) => row?.roomChatID} />
             </div>
           </div>
         </>
@@ -219,14 +219,14 @@ const Chat = () => {
         <>
           <Grid container spacing={2}>
             <Grid item xs={6}>
-              <p className='text-xl  mb-5'><span><ChatIcon className='mr-5 w-72' /></span>Chat</p>
+              <p className='text-xl  mb-5'><span><ChatIcon className='mr-5 w-72' /></span>Chat Management</p>
             </Grid>
             <Grid item xs={6}>
               {/* <DialogsHotline /> */}
             </Grid>
           </Grid>
           <div style={{ height: 400, width: 'auto' }}>
-            <DataGrid rows={rows} columns={columns} getRowId={(row) => row.roomChatID} />
+            <DataGrid rows={rows ?? ''} columns={columns} getRowId={(row) => row?.roomChatID} />
           </div>
         </>
 
